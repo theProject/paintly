@@ -1,15 +1,24 @@
-name: painted  # Keep your project name
+name: painted
 description: A cross-platform paint-by-number application
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.0 <4.0.0'
+  sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   provider: ^6.1.1
   shared_preferences: ^2.2.2
+  image_picker: ^1.0.7
+  image: ^4.1.7
+  path_provider: ^2.1.2
+  permission_handler: ^11.2.0
+  google_fonts: ^6.1.0
+  audioplayers: ^5.2.1
+  flutter_svg: ^2.0.9
+  animate_do: ^3.1.2
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +31,6 @@ flutter:
   assets:
     - assets/images/
     - assets/data/
+    - assets/audio/
+    - assets/scenes/
+    - assets/svg/

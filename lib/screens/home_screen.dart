@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:convert';
 import '../models/pixel_art.dart';
 import 'coloring_screen.dart';
-
+import 'import_image_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -111,13 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) {
-                // Replace with your import photo screen or a placeholder
-                return Scaffold(
-                  appBar: AppBar(title: const Text('Import Photo')),
-                  body: const Center(child: Text('Import Photo Screen')),
-                );
-              },
+              builder: (context) => const ImportImageScreen(),
             ),
           );
         },
@@ -152,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   /// Build a tab widget
   Widget _buildTab(String label, int index) {
     final isSelected = selectedTab == index;
