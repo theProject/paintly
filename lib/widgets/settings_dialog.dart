@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
 import '../providers/settings_provider.dart';
@@ -8,70 +9,144 @@ class SettingsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElasticIn(
-      child: Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '⚙️ Settings',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.2),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Consumer<SettingsProvider>(
-                builder: (context, settings, child) {
-                  return Column(
-                    children: [
-                      _buildSettingTile(
-                        context,
-                        icon: Icons.music_note,
-                        title: 'Background Music',
-                        value: settings.musicEnabled,
-                        onChanged: (_) => settings.toggleMusic(),
-                        color: Colors.pink,
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header
+                  FadeInDown(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(height: 12),
-                      _buildSettingTile(
-                        context,
-                        icon: Icons.volume_up,
-                        title: 'Sound Effects',
-                        value: settings.soundEnabled,
-                        onChanged: (_) => settings.toggleSound(),
-                        color: Colors.orange,
+                      child: Icon(
+                        Icons.settings_rounded,
+                        size: 40,
+                        color: colorScheme.primary,
                       ),
-                      const SizedBox(height: 12),
-                      _buildSettingTile(
-                        context,
-                        icon: Icons.brush,
-                        title: 'Drag to Paint',
-                        subtitle: 'Swipe to color multiple pixels',
-                        value: settings.dragToPaintEnabled,
-                        onChanged: (_) => settings.toggleDragToPaint(),
-                        color: Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  FadeInDown(
+                    delay: const Duration(milliseconds: 100),
+                    child: Text(
+                      'Settings',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
                       ),
-                    ],
-                  );
-                },
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Settings options
+                  Consumer<SettingsProvider>(
+                    builder: (context, settings, child) {
+                      return Column(
+                        children: [
+                          FadeInLeft(
+                            delay: const Duration(milliseconds: 200),
+                            child: _buildSettingTile(
+                              context,
+                              icon: Icons.music_note_rounded,
+                              title: 'Background Music',
+                              value: settings.musicEnabled,
+                              onChanged: (_) {
+                                HapticFeedback.lightImpact();
+                                settings.toggleMusic();
+                              },
+                              color: const Color(0xFFFF8FAB), // Pink
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          FadeInLeft(
+                            delay: const Duration(milliseconds: 300),
+                            child: _buildSettingTile(
+                              context,
+                              icon: Icons.volume_up_rounded,
+                              title: 'Sound Effects',
+                              value: settings.soundEnabled,
+                              onChanged: (_) {
+                                HapticFeedback.lightImpact();
+                                settings.toggleSound();
+                              },
+                              color: const Color(0xFFFFD68C), // Yellow
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          FadeInLeft(
+                            delay: const Duration(milliseconds: 400),
+                            child: _buildSettingTile(
+                              context,
+                              icon: Icons.gesture_rounded,
+                              title: 'Drag to Paint',
+                              subtitle: 'Swipe to color multiple pixels',
+                              value: settings.dragToPaintEnabled,
+                              onChanged: (_) {
+                                HapticFeedback.lightImpact();
+                                settings.toggleDragToPaint();
+                              },
+                              color: const Color(0xFF9DDAC8), // Mint
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Done button
+                  FadeInUp(
+                    delay: const Duration(milliseconds: 500),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(140, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Done',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(120, 44),
-                ),
-                child: const Text('Done'),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -88,14 +163,25 @@ class SettingsDialog extends StatelessWidget {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withValues(alpha: 0.2),
+          width: 2,
+        ),
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 28),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 28),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -123,6 +209,7 @@ class SettingsDialog extends StatelessWidget {
             value: value,
             onChanged: onChanged,
             activeColor: color,
+            activeTrackColor: color.withValues(alpha: 0.3),
           ),
         ],
       ),

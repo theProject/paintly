@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:ui';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
 import 'home_screen.dart';
@@ -13,8 +15,11 @@ class MainNavigationScreen extends StatefulWidget {
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
+class _MainNavigationScreenState extends State<MainNavigationScreen> 
+    with TickerProviderStateMixin {
   int _selectedIndex = 0;
+  late AnimationController _animationController;
+  late AnimationController _bounceController;
   
   final List<Widget> _screens = [
     const HomeScreen(),
@@ -22,37 +27,104 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _animationController.forward();
+    
+    // Add spring bounce animation
+    _bounceController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _bounceController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Scaffold(
+      extendBody: true,
       body: Stack(
         children: [
-          IndexedStack(
-            index: _selectedIndex,
-            children: _screens,
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.1, 0),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  )),
+                  child: child,
+                ),
+              );
+            },
+            child: IndexedStack(
+              key: ValueKey<int>(_selectedIndex),
+              index: _selectedIndex,
+              children: _screens,
+            ),
           ),
-          // Settings button overlay
+          // Settings button overlay with spring animation
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
             right: 16,
-            child: BounceInDown(
-              delay: const Duration(milliseconds: 500),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
+            child: AnimatedBuilder(
+              animation: _bounceController,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: 1.0 + (_bounceController.value * 0.05),
+                  child: ElasticIn(
+                    delay: const Duration(milliseconds: 800),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.primary.withValues(alpha: 0.2),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            _showSettingsDialog(context);
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Icon(
+                              Icons.settings_rounded,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.purple),
-                  onPressed: () => _showSettingsDialog(context),
-                ),
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -62,45 +134,150 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
+              blurRadius: 30,
+              offset: const Offset(0, -10),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-              context.read<SettingsProvider>().playSound('tap.mp3');
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.1),
+                    colorScheme.tertiary.withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
+                  left: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    width: 1.5,
+                  ),
+                  right: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    width: 1.5,
+                  ),
+                ),
+              ),
+              child: SafeArea(
+                top: false,
+                child: SizedBox(
+                  height: 65,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildNavItem(
+                          index: 0,
+                          icon: Icons.grid_on_rounded,
+                          label: '',
+                          color: colorScheme.primary,
+                        ),
+                        _buildNavItem(
+                          index: 1,
+                          icon: Icons.landscape_rounded,
+                          label: '',
+                          color: colorScheme.tertiary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    final isSelected = _selectedIndex == index;
+    
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            setState(() {
+              _selectedIndex = index;
+            });
+            context.read<SettingsProvider>().playSound('bubbletap.wav');
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: isSelected ? 1 : 0),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.elasticOut,
+            builder: (context, value, child) {
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Transform.scale(
+                      scale: 1.0 + (value * 0.15),
+                      child: Container(
+                        width: 40 + (value * 6),
+                        height: 40 + (value * 6),
+                        decoration: BoxDecoration(
+                          color: isSelected 
+                            ? color.withValues(alpha: 0.9)
+                            : Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(14 + (value * 2)),
+                          boxShadow: isSelected ? [
+                            BoxShadow(
+                              color: color.withValues(alpha: 0.3),
+                              blurRadius: 15,
+                              spreadRadius: 1,
+                            ),
+                          ] : [],
+                          border: Border.all(
+                            color: isSelected 
+                              ? Colors.white.withValues(alpha: 0.3)
+                              : Colors.white.withValues(alpha: 0.1),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Icon(
+                          icon,
+                          color: isSelected ? Colors.white : color.withValues(alpha: 0.8),
+                          size: 22 + (value * 2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 300),
+                      style: TextStyle(
+                        fontSize: 10 + (value * 1),
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        color: isSelected ? color : Colors.grey[700],
+                      ),
+                      child: Text(label),
+                    ),
+                  ],
+                ),
+              );
             },
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.white,
-            selectedItemColor: Theme.of(context).colorScheme.primary,
-            unselectedItemColor: Colors.grey,
-            selectedFontSize: 14,
-            unselectedFontSize: 12,
-            items: [
-              BottomNavigationBarItem(
-                icon: Pulse(
-                  infinite: _selectedIndex == 0,
-                  duration: const Duration(seconds: 2),
-                  child: const Icon(Icons.grid_on_rounded, size: 28),
-                ),
-                label: 'Pixels',
-              ),
-              BottomNavigationBarItem(
-                icon: Pulse(
-                  infinite: _selectedIndex == 1,
-                  duration: const Duration(seconds: 2),
-                  child: const Icon(Icons.landscape_rounded, size: 28),
-                ),
-                label: 'Scenes',
-              ),
-            ],
           ),
         ),
       ),
@@ -108,9 +285,24 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   void _showSettingsDialog(BuildContext context) {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (context) => const SettingsDialog(),
+      barrierDismissible: true,
+      barrierLabel: 'Settings',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return const SettingsDialog();
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(
+            parent: animation,
+            curve: Curves.elasticOut,
+          ),
+          child: child,
+        );
+      },
     );
   }
 }

@@ -26,18 +26,23 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Colorful Adventures',
             theme: ThemeData(
-              primarySwatch: Colors.purple,
+              primarySwatch: Colors.pink,
               useMaterial3: true,
               textTheme: GoogleFonts.baloo2TextTheme(
                 Theme.of(context).textTheme,
               ),
               colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.purple,
+                seedColor: const Color(0xFFFABF23), // Yellow from new palette
                 brightness: Brightness.light,
               ).copyWith(
-                primary: const Color(0xFF8B5CF6),
-                secondary: const Color(0xFFF59E0B),
-                surface: const Color(0xFFF3F4F6),
+                primary: const Color(0xFFE93A45), // Red
+                secondary: const Color(0xFFFABF23), // Yellow
+                tertiary: const Color(0xFF51BAA3), // Teal
+                surface: const Color(0xFFFFF8F0), // Light cream surface
+                onPrimary: Colors.white,
+                onSecondary: Colors.black,
+                primaryContainer: const Color(0xFFFF8A3D), // Orange
+                secondaryContainer: const Color(0xFF9B72AA), // Purple
               ),
               elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ElevatedButton.styleFrom(
@@ -48,6 +53,13 @@ class MyApp extends StatelessWidget {
                     horizontal: 24,
                     vertical: 12,
                   ),
+                  elevation: 0,
+                ),
+              ),
+              cardTheme: CardThemeData(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
                 ),
               ),
             ),

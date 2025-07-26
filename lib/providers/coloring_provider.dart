@@ -129,4 +129,58 @@ class ColoringProvider extends ChangeNotifier {
     final pixelNumber = _currentPixelArt!.pixels[row][col];
     return pixelNumber == _selectedColorId && !_filledPixels[row][col];
   }
+
+  /// Load saved progress
+  void loadProgress(List<List<bool>> savedFilledPixels) {
+    if (_currentPixelArt == null) return;
+    
+    // Copy the saved progress
+    for (int row = 0; row < savedFilledPixels.length && row < _filledPixels.length; row++) {
+      for (int col = 0; col < savedFilledPixels[row].length && col < _filledPixels[row].length; col++) {
+        if (savedFilledPixels[row][col]) {
+          _filledPixels[row][col] = true;
+          
+          // Find the color for this pixel
+          final pixelNumber = _currentPixelArt!.pixels[row][col];
+          if (pixelNumber != 0) {
+            final colorPalette = _currentPixelArt!.palette.firstWhere(
+              (p) => p.id == pixelNumber,
+              orElse: () => ColorPalette(id: pixelNumber, color: Colors.grey),
+            );
+            _pixelColors[row][col] = colorPalette.color;
+          }
+        }
+      }
+    }
+    
+    // Update completed colors
+    for (var color in _currentPixelArt!.palette) {
+      _checkColorCompletion(color.id);
+    }
+    
+    notifyListeners();
+  }
+
+  /// Reset all progress for current pixel art
+  void resetProgress() {
+    if (_currentPixelArt == null) return;
+    
+    _filledPixels = List.generate(
+      _currentPixelArt!.height,
+      (row) => List.generate(_currentPixelArt!.width, (col) => false),
+    );
+    _pixelColors = List.generate(
+      _currentPixelArt!.height,
+      (row) => List.generate(_currentPixelArt!.width, (col) => null),
+    );
+    _completedColors = {};
+    _selectedColorId = null;
+    
+    // Reinitialize completed colors map
+    for (var color in _currentPixelArt!.palette) {
+      _completedColors[color.id] = false;
+    }
+    
+    notifyListeners();
+  }
 }
