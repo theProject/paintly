@@ -129,77 +129,64 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
           ),
         ],
       ),
-      bottomNavigationBar: Container(
+    bottomNavigationBar: Container(
+  decoration: BoxDecoration(
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.1),
+        blurRadius: 30,
+        offset: const Offset(0, -10),
+      ),
+    ],
+  ),
+  child: ClipRRect(
+    borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+      child: Container(
+        height: 65,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 30,
-              offset: const Offset(0, -10),
-            ),
-          ],
-        ),
-        child: ClipRRect(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withValues(alpha: 0.1),
+              colorScheme.tertiary.withValues(alpha: 0.1),
+            ],
+          ),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withValues(alpha: 0.1),
-                    colorScheme.tertiary.withValues(alpha: 0.1),
-                  ],
-                ),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                border: Border(
-                  top: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 1.5,
-                  ),
-                  left: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    width: 1.5,
-                  ),
-                  right: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    width: 1.5,
-                  ),
-                ),
-              ),
-              child: SafeArea(
-                top: false,
-                child: SizedBox(
-                  height: 65,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildNavItem(
-                          index: 0,
-                          icon: Icons.grid_on_rounded,
-                          label: '',
-                          color: colorScheme.primary,
-                        ),
-                        _buildNavItem(
-                          index: 1,
-                          icon: Icons.landscape_rounded,
-                          label: '',
-                          color: colorScheme.tertiary,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          // Uniform border — same color & width on all sides
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.3),
+            width: 1.5,
           ),
         ),
+        child: SafeArea(
+          top: false,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                index: 0,
+                icon: Icons.grid_on_rounded,
+                label: 'Pixels',
+                color: colorScheme.primary,
+              ),
+              _buildNavItem(
+                index: 1,
+                icon: Icons.landscape_rounded,
+                label: 'The Scene',
+                color: colorScheme.tertiary,
+              ),
+            ],
+          ),
+        ),
+       ),
       ),
-    );
+     ),
+    ),   
+   );
   }
 
   Widget _buildNavItem({
@@ -219,9 +206,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
             setState(() {
               _selectedIndex = index;
             });
-            context.read<SettingsProvider>().playSound('bubbletap.wav');
+            context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: isSelected ? 1 : 0),
             duration: const Duration(milliseconds: 600),
@@ -236,17 +223,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                     Transform.scale(
                       scale: 1.0 + (value * 0.15),
                       child: Container(
-                        width: 40 + (value * 6),
-                        height: 40 + (value * 6),
+                        width: 20,
+                        height: 20,
                         decoration: BoxDecoration(
                           color: isSelected 
                             ? color.withValues(alpha: 0.9)
                             : Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(14 + (value * 2)),
+                          borderRadius: BorderRadius.circular(9 + (value * 2)),
                           boxShadow: isSelected ? [
                             BoxShadow(
                               color: color.withValues(alpha: 0.3),
-                              blurRadius: 15,
+                              blurRadius: 13,
                               spreadRadius: 1,
                             ),
                           ] : [],
@@ -260,7 +247,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                         child: Icon(
                           icon,
                           color: isSelected ? Colors.white : color.withValues(alpha: 0.8),
-                          size: 22 + (value * 2),
+                          size: 8 + (value * 2),
                         ),
                       ),
                     ),

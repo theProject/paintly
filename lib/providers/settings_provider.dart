@@ -65,7 +65,7 @@ class SettingsProvider extends ChangeNotifier {
     try {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
       await _audioPlayer.setVolume(0.3);
-      await _audioPlayer.play(AssetSource('audio/background_music.mp3'));
+      await _audioPlayer.play(AssetSource('audio/MagicPaint.mp3'));
       _isMusicPlaying = true;
     } catch (e) {
       debugPrint('Error playing background music: $e');
