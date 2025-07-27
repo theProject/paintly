@@ -35,3 +35,5 @@ flutter:
     - assets/audio/
     - assets/scenes/
     - assets/svg/
+    - assets/svg/TasaiYumeForeground.svg
+    - assets/svg/valley.svg

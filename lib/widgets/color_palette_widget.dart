@@ -35,14 +35,14 @@ class ColorPaletteWidget extends StatelessWidget {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    width: 60,
-                    height: 60,
+                    width: 45,
+                    height: 45,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: colorItem.color,
                       border: Border.all(
                         color: isSelected ? Colors.black : Colors.grey[300]!,
-                        width: isSelected ? 3 : 1,
+                        width: isSelected ? 2 : 1,
                       ),
                       boxShadow: isSelected
                           ? [

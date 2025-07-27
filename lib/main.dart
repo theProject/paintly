@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<SettingsProvider>(
         builder: (context, settings, child) {
           return MaterialApp(
-            title: 'Colorful Adventures',
+            title: 'TasaiYume: Winters Magical Dream',
             theme: ThemeData(
               primarySwatch: Colors.pink,
               useMaterial3: true,

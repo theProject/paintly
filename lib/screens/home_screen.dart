@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   FadeInDown(
                     child: Text(
-                      '🎨 Pixel Art Fun',
+                      '🎨 TasaiYsume',
                       style: Theme.of(context)
                           .textTheme
                           .headlineLarge
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   FadeInDown(
                     delay: const Duration(milliseconds: 200),
                     child: Text(
-                      'Choose your next masterpiece!',
+                      'Winnie and Aeris and the Magical Paintbrush',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
