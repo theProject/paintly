@@ -1,13 +1,20 @@
- import 'package:flutter/material.dart';
+import 'dart:ui'; // for ImageFilter
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
 import '../models/pixel_art.dart';
 import 'coloring_screen.dart';
-import 'import_image_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int? selectedTab;
+  final VoidCallback? onTabChanged;
+
+  const HomeScreen({
+    super.key, 
+    this.selectedTab,
+    this.onTabChanged,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -15,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<PixelArt> coloringPages = [];
-  int selectedTab = 0;
 
   @override
   void initState() {
@@ -58,176 +64,36 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FadeInDown(
-                    child: Text(
-                      '🎨 TasaiYsume',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineLarge
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.primary,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  FadeInDown(
-                    delay: const Duration(milliseconds: 200),
-                    child: Text(
-                      'Winnie and Aeris and the Magical Paintbrush',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.onSurface.withValues(alpha: 0.7),
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Category Tabs (fixed and polished)
-            SizedBox(
-              height: 64, // ensures room for bounce, no overflow
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  _buildTab('All', 0, Icons.grid_view_rounded),
-                  _buildTab('Animals', 1, Icons.pets_rounded),
-                  _buildTab('Nature', 2, Icons.local_florist_rounded),
-                  _buildTab('Objects', 3, Icons.category_rounded),
-                  _buildTab('Shapes', 4, Icons.star_rounded),
-                ],
-              ),
-            ),
-            const SizedBox(height: 50),
-
-            // Grid of coloring pages
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(16),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 0.85,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: coloringPages.length,
-                itemBuilder: (context, index) {
-                  return FadeInUp(
-                    delay: Duration(milliseconds: index * 50),
-                    child: _buildColoringPageTile(coloringPages[index], index),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          HapticFeedback.lightImpact();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ImportImageScreen(),
-            ),
-          );
-        },
-        icon: const Icon(Icons.add_photo_alternate_rounded),
-        label: const Text('Import Photo'),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: Colors.white,
-      ),
-    );
+  // Filter pages based on selected tab
+  List<PixelArt> get filteredPages {
+    if (widget.selectedTab == null || widget.selectedTab == 0) {
+      return coloringPages; // All
+    }
+    
+    // You'll need to add a category property to your PixelArt model
+    // For now, returning all pages
+    return coloringPages;
   }
 
-  /// Bulletproof category tab builder (no yellow tape or overflow)
-  Widget _buildTab(String label, int index, IconData icon) {
-    final isSelected = selectedTab == index;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(28),
-          onTap: () {
-            HapticFeedback.lightImpact();
-            setState(() => selectedTab = index);
-          },
-          child: SizedBox(
-            height: 56, // fixes RenderFlex overflow
-            child: Align(
-              alignment: Alignment.center,
-              child: AnimatedScale(
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutBack, // smooth expressive bounce
-                scale: isSelected ? 1.1 : 1.0,
-                child: Container(
-                  constraints: const BoxConstraints(
-                    minHeight: 48,
-                    minWidth: 48,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isSelected ? 20 : 16,
-                    vertical: 8, // reduced to avoid scaling overflow
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected ? colorScheme.primary : Colors.white,
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(
-                      color: isSelected
-                          ? Colors.transparent
-                          : Colors.black.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        icon,
-                        color: isSelected
-                            ? Colors.white
-                            : colorScheme.onSurface,
-                        size: 22,
-                      ),
-                      if (isSelected) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          label,
-                          style: TextStyle(
-                            color: isSelected
-                                ? Colors.white
-                                : colorScheme.onSurface,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent, // Transparent to show background
+      body: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
+          childAspectRatio: 0.85,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
         ),
+        itemCount: filteredPages.length,
+        itemBuilder: (context, index) {
+          return FadeInUp(
+            delay: Duration(milliseconds: index * 50),
+            child: _buildColoringPageTile(filteredPages[index], index),
+          );
+        },
       ),
     );
   }
@@ -245,54 +111,71 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: [
-                colorScheme.primary,
-                colorScheme.secondary,
-                colorScheme.tertiary,
-                const Color(0xFF9DDAC8),
-                const Color(0xFF8B96A9),
-              ][index % 5].withValues(alpha: 0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15), // 15% glass background
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: [
+                    colorScheme.primary,
+                    colorScheme.secondary,
+                    colorScheme.tertiary,
+                    const Color(0xFF9DDAC8),
+                    const Color(0xFF8B96A9),
+                  ][index % 5].withValues(alpha: 0.1),
+                  blurRadius: 15,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.grid_on_rounded,
-                      size: 48,
-                      color: Colors.grey[400],
+            child: Container(
+              margin: const EdgeInsets.all(2), // Small margin to see glass edge
+              decoration: BoxDecoration(
+                color: Colors.white, // Inner white container
+                borderRadius: BorderRadius.circular(22),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.grid_on_rounded,
+                            size: 48,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    Text(
+                      pixelArt.name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                pixelArt.name,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+            ),
           ),
         ),
       ),
