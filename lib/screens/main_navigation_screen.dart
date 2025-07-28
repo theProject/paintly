@@ -97,15 +97,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Reduced from 10
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.15), // 15% white
+                            color: Colors.white.withValues(alpha: 0.05), // Reduced from 0.15 to 5%
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              width: 1,
+                              color: Colors.white.withValues(alpha: 0.2), // Reduced from 0.2
+                              width: 0.7, // Thinner border
                             ),
                           ),
                           child: Row(
@@ -179,7 +179,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'TasaiYsume',
+                                    'TasaiYume',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -257,16 +257,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
         child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Reduced from 10
             child: Container(
               height: 65,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15), // 15% white for ultra-clear glass
+                color: Colors.white.withValues(alpha: 0.05), // Reduced from 0.15 to 5%
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  width: 1,
+                  color: Colors.white.withValues(alpha: 0.2), // Reduced from 0.2
+                  width: 0.7, // Thinner border
                 ),
               ),
               child: SafeArea(

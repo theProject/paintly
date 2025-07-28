@@ -114,14 +114,14 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Reduced from 10
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15), // 15% glass background
+              color: Colors.white.withValues(alpha: 0.02), // Reduced from 0.15 to 5%
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
-                width: 1,
+                color: Colors.white.withValues(alpha: 0.2), // Reduced from 0.2
+                width: 0.5, // Thinner border
               ),
               boxShadow: [
                 BoxShadow(
