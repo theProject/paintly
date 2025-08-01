@@ -1,5 +1,5 @@
-name: painted
-description: PaintMagic for Aeris and Winnie
+name: tasaiyume
+description: TasaiYume - Colorful dreams of  Aeris and Winnie
 version: 1.0.0+1
 
 environment:
@@ -8,32 +8,80 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # State Management
   provider: ^6.1.1
+  
+  # Storage
   shared_preferences: ^2.2.2
+  
+  # Image Handling
   image_picker: ^1.0.7
   image: ^4.1.7
   path_provider: ^2.1.2
+  
+  # Permissions
   permission_handler: ^11.2.0
+  
+  # UI/UX
   google_fonts: ^6.1.0
-  audioplayers: ^5.2.1
   flutter_svg: ^2.0.9
   animate_do: ^3.1.2
   confetti: ^0.7.0
+  lottie: ^3.0.0  # Updated to latest version
+  
+  # Audio
+  audioplayers: ^5.2.1
+  
+  # XML/SVG Processing
   xml: ^6.5.0
+  path_drawing: ^1.0.1
+  
+  # Missing Dependencies that are causing errors:
+  cupertino_icons: ^1.0.6  # For iOS-style icons
+  http: ^1.2.0  # For web requests (if using web_search)
+  flutter_animate: ^4.5.0  # For additional animations
+  collection: ^1.18.0  # For advanced collections
+  
+  # If you're using Scene Mode features:
+  vector_math: ^2.1.4  # For transformations
+  
+  # If using JSON serialization:
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
+  
+  # If using JSON serialization:
+  build_runner: ^2.4.8
+  json_serializable: ^6.7.1
 
 flutter:
   uses-material-design: true
   
   assets:
     - assets/images/
+    - assets/images/previews/  # Added for preview images
     - assets/data/
     - assets/audio/
     - assets/scenes/
     - assets/svg/
     - assets/svg/TasaiYumeForeground.svg
     - assets/svg/valley.svg
+    - assets/svg/magic/
+    - assets/svg/magic/characters/
+    - assets/svg/magic/farm/
+    - assets/svg/magic/ocean/
+    - assets/svg/magic/city/
+    - assets/svg/magic/forest/
+    - assets/animations/  # Added for Lottie animations
+  
+  # If you have custom fonts:
+  # fonts:
+  #   - family: YourCustomFont
+  #     fonts:
+  #       - asset: assets/fonts/YourFont-Regular.ttf
+  #       - asset: assets/fonts/YourFont-Bold.ttf
+  #         weight: 700

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chicken body (main feathers) -->
+  <path id="feathers" d="M50 100 Q50 50 100 50 Q150 50 150 100 Q150 150 100 150 Q50 150 50 100" 
+        fill="#FFE5B4" stroke="#8B4513" stroke-width="2"/>
+  
+  <!-- Tail feathers -->
+  <path id="tail" d="M130 90 Q160 80 170 100 Q160 120 130 110 Z" 
+        fill="#8B4513" stroke="#654321" stroke-width="2"/>
+  
+  <!-- Wing detail -->
+  <path id="wing" d="M70 80 Q90 70 100 80 Q90 90 70 85 Z" 
+        fill="#F5DEB3" stroke="#8B4513" stroke-width="1"/>
+  
+  <!-- Head/Comb (locked in customization) -->
+  <path id="comb" d="M85 45 Q90 35 95 45 Q100 35 105 45 Q110 35 115 45" 
+        fill="#DC143C" stroke="#B22222" stroke-width="2"/>
+  
+  <!-- Beak (locked in customization) -->
+  <path id="beak" d="M85 65 L95 70 L85 75 Z" 
+        fill="#FFA500" stroke="#FF8C00" stroke-width="1"/>
+  
+  <!-- Eye (locked in customization) -->
+  <circle id="eye" cx="90" cy="60" r="5" 
+          fill="#000000" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Legs (locked in customization) -->
+  <line id="leg1" x1="80" y1="150" x2="80" y2="170" 
+        stroke="#FF8C00" stroke-width="4" stroke-linecap="round"/>
+  <line id="leg2" x1="120" y1="150" x2="120" y2="170" 
+        stroke="#FF8C00" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Feet -->
+  <path id="foot1" d="M80 170 L70 175 M80 170 L80 175 M80 170 L90 175" 
+        stroke="#FF8C00" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path id="foot2" d="M120 170 L110 175 M120 170 L120 175 M120 170 L130 175" 
+        stroke="#FF8C00" stroke-width="3" stroke-linecap="round" fill="none"/>
+  
+  <!-- Number labels (for paint-by-number) -->
+  <text x="100" y="100" text-anchor="middle" font-size="16" fill="#666666">1</text>
+  <text x="140" y="100" text-anchor="middle" font-size="14" fill="#666666">2</text>
+  <text x="85" y="82" text-anchor="middle" font-size="12" fill="#666666">3</text>
+</svg>

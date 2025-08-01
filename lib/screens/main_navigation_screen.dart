@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'home_screen.dart';
 import 'import_image_screen.dart';
+import 'magic_mode_screen.dart';
 import '../scene_mode/screens/scene_home_screen.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/settings_dialog.dart';
@@ -23,14 +24,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
   int _selectedTopTab = 0; // For top navigation tabs
   late AnimationController _animationController;
   late AnimationController _bounceController;
+  late AnimationController _liquidController; // For liquid glass effect
 
   List<Widget> get _screens => [
-    HomeScreen(
-      selectedTab: _selectedTopTab,
-      onTabChanged: () => setState(() {}),
-    ),
-    const SceneHomeScreen(),
-  ];
+        HomeScreen(
+          selectedTab: _selectedTopTab,
+          onTabChanged: () => setState(() {}),
+        ),
+        const MagicModeScreen(),
+        const SceneHomeScreen(),
+      ];
 
   @override
   void initState() {
@@ -43,12 +46,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat(reverse: true);
+    _liquidController = AnimationController(
+      duration: const Duration(seconds: 10), // Slow liquid motion
+      vsync: this,
+    )..repeat();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     _bounceController.dispose();
+    _liquidController.dispose();
     super.dispose();
   }
 
@@ -94,104 +102,126 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                   // Top glass bar with navigation buttons and logo
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Reduced from 10
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.05), // Reduced from 0.15 to 5%
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2), // Reduced from 0.2
-                              width: 0.7, // Thinner border
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              // Navigation buttons (from HomeScreen)
-                              _buildTopNavButton(Icons.grid_on_rounded, _selectedTopTab == 0, () {
-                                setState(() => _selectedTopTab = 0);
-                              }),
-                              const SizedBox(width: 8),
-                              _buildTopNavButton(Icons.pets_rounded, _selectedTopTab == 1, () {
-                                setState(() => _selectedTopTab = 1);
-                              }),
-                              const SizedBox(width: 8),
-                              _buildTopNavButton(Icons.local_florist_rounded, _selectedTopTab == 2, () {
-                                setState(() => _selectedTopTab = 2);
-                              }),
-                              const SizedBox(width: 8),
-                              _buildTopNavButton(Icons.category_rounded, _selectedTopTab == 3, () {
-                                setState(() => _selectedTopTab = 3);
-                              }),
-                              const SizedBox(width: 8),
-                              _buildTopNavButton(Icons.star_rounded, _selectedTopTab == 4, () {
-                                setState(() => _selectedTopTab = 4);
-                              }),
-                              
-                              const Spacer(),
-                              
-                              // Settings button
-                              AnimatedBuilder(
-                                animation: _bounceController,
-                                builder: (context, child) => Transform.scale(
-                                  scale: 1.0 + (_bounceController.value * 0.05),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.9),
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: colorScheme.primary.withValues(alpha: 0.2),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 4),
+                    child: AnimatedBuilder(
+                      animation: _liquidController,
+                      builder: (context, child) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                gradient: LinearGradient(
+                                  begin: Alignment(
+                                    -1 + 2 * _liquidController.value,
+                                    -1 + 2 * _liquidController.value,
+                                  ),
+                                  end: Alignment(
+                                    1 - 2 * _liquidController.value,
+                                    1 - 2 * _liquidController.value,
+                                  ),
+                                  colors: [
+                                    Colors.white.withValues(alpha: 0.05),
+                                    Colors.blue.withValues(alpha: 0.03),
+                                    Colors.purple.withValues(alpha: 0.02),
+                                    Colors.pink.withValues(alpha: 0.03),
+                                    Colors.white.withValues(alpha: 0.05),
+                                  ],
+                                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                                ),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  // Navigation buttons (from HomeScreen)
+                                  _buildTopNavButton(Icons.grid_on_rounded, _selectedTopTab == 0, () {
+                                    setState(() => _selectedTopTab = 0);
+                                  }),
+                                  const SizedBox(width: 8),
+                                  _buildTopNavButton(Icons.pets_rounded, _selectedTopTab == 1, () {
+                                    setState(() => _selectedTopTab = 1);
+                                  }),
+                                  const SizedBox(width: 8),
+                                  _buildTopNavButton(Icons.local_florist_rounded, _selectedTopTab == 2, () {
+                                    setState(() => _selectedTopTab = 2);
+                                  }),
+                                  const SizedBox(width: 8),
+                                  _buildTopNavButton(Icons.category_rounded, _selectedTopTab == 3, () {
+                                    setState(() => _selectedTopTab = 3);
+                                  }),
+                                  const SizedBox(width: 8),
+                                  _buildTopNavButton(Icons.star_rounded, _selectedTopTab == 4, () {
+                                    setState(() => _selectedTopTab = 4);
+                                  }),
+                                  
+                                  const Spacer(),
+                                  
+                                  // Settings button
+                                  AnimatedBuilder(
+                                    animation: _bounceController,
+                                    builder: (context, child) => Transform.scale(
+                                      scale: 1.0 + (_bounceController.value * 0.05),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(alpha: 0.9),
+                                          borderRadius: BorderRadius.circular(20),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: colorScheme.primary.withValues(alpha: 0.2),
+                                              blurRadius: 12,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(20),
-                                        onTap: () {
-                                          HapticFeedback.lightImpact();
-                                          _showSettingsDialog(context);
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Icon(Icons.settings_rounded, size: 20),
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(20),
+                                            onTap: () {
+                                              HapticFeedback.lightImpact();
+                                              _showSettingsDialog(context);
+                                            },
+                                            child: const Padding(
+                                              padding: EdgeInsets.all(10),
+                                              child: Icon(Icons.settings_rounded, size: 20),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              
-                              // Logo with palette on the right
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.palette_rounded,
-                                    color: colorScheme.primary,
-                                    size: 28,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'TasaiYume',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.primary,
-                                    ),
+                                  const SizedBox(width: 12),
+                                  
+                                  // Logo with palette on the right
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.palette_rounded,
+                                        color: colorScheme.primary,
+                                        size: 28,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'TasaiYsume',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme.primary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                   
@@ -256,42 +286,69 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
         ),
         child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Reduced from 10
-            child: Container(
-              height: 65,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05), // Reduced from 0.15 to 5%
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2), // Reduced from 0.2
-                  width: 0.7, // Thinner border
-                ),
-              ),
-              child: SafeArea(
-                top: false,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildNavItem(
-                      index: 0,
-                      icon: Icons.grid_on_rounded,
-                      label: 'Pixels',
-                      color: colorScheme.primary,
+          child: AnimatedBuilder(
+            animation: _liquidController,
+            builder: (context, child) {
+              return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Container(
+                  height: 65,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                    gradient: LinearGradient(
+                      begin: Alignment(
+                        -1 + 2 * (_liquidController.value * 0.5),
+                        -0.5,
+                      ),
+                      end: Alignment(
+                        1 - 2 * (_liquidController.value * 0.5),
+                        0.5,
+                      ),
+                      colors: [
+                        Colors.white.withValues(alpha: 0.05),
+                        Colors.cyan.withValues(alpha: 0.02),
+                        Colors.blue.withValues(alpha: 0.03),
+                        Colors.purple.withValues(alpha: 0.02),
+                        Colors.white.withValues(alpha: 0.05),
+                      ],
                     ),
-                    // Add button (was floating action button)
-                    _buildAddButton(colorScheme),
-                    _buildNavItem(
-                      index: 1,
-                      icon: Icons.landscape_rounded,
-                      label: 'The Scene',
-                      color: colorScheme.tertiary,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      width: 0.5,
                     ),
-                  ],
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildNavItem(
+                          index: 0,
+                          icon: Icons.grid_on_rounded,
+                          label: 'Pixels',
+                          color: colorScheme.primary,
+                        ),
+                        _buildNavItem(
+                          index: 1,
+                          icon: Icons.auto_fix_high_rounded,
+                          label: 'Magic',
+                          color: colorScheme.secondary,
+                        ),
+                        // Add button (was floating action button)
+                        _buildAddButton(colorScheme),
+                        _buildNavItem(
+                          index: 2,
+                          icon: Icons.landscape_rounded,
+                          label: 'Scene',
+                          color: colorScheme.tertiary,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),

@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/services.dart';
+import 'package:xml/xml.dart' as xml;
+
+// Replace the placeholder CustomPaint in magic_coloring_screen.dart with this widget:
 
 class SvgColoringWidget extends StatefulWidget {
   final String svgPath;
-  final List<Color> colorPalette;
-  
+  final Map<String, Color> coloredRegions;
+  final Map<String, String> regionNumbers;
+  final Map<String, Color> predefinedColors;
+  final bool isCustomizing;
+  final Function(String) onRegionTap;
+
   const SvgColoringWidget({
     super.key,
     required this.svgPath,
-    required this.colorPalette,
+    required this.coloredRegions,
+    required this.regionNumbers,
+    required this.predefinedColors,
+    required this.isCustomizing,
+    required this.onRegionTap,
   });
 
   @override
@@ -17,9 +27,8 @@ class SvgColoringWidget extends StatefulWidget {
 }
 
 class _SvgColoringWidgetState extends State<SvgColoringWidget> {
-  String? _svgContent;
-  Color? _selectedColor;
-  final Map<String, Color> _filledRegions = {};
+  String? svgContent;
+  Map<String, Rect> regionBounds = {};
 
   @override
   void initState() {
@@ -29,150 +38,288 @@ class _SvgColoringWidgetState extends State<SvgColoringWidget> {
 
   Future<void> _loadSvg() async {
     try {
-      final svgString = await rootBundle.loadString(widget.svgPath);
+      final String content = await rootBundle.loadString(widget.svgPath);
       setState(() {
-        _svgContent = svgString;
+        svgContent = _processSvg(content);
       });
     } catch (e) {
       debugPrint('Error loading SVG: $e');
     }
   }
 
-  String _updateSvgWithColors() {
-    if (_svgContent == null) return '';
+  String _processSvg(String originalSvg) {
+    final document = xml.XmlDocument.parse(originalSvg);
     
-    String updatedSvg = _svgContent!;
+    // Process each path/shape element
+    final elements = document.findAllElements('path')
+      ..addAll(document.findAllElements('circle'))
+      ..addAll(document.findAllElements('rect'))
+      ..addAll(document.findAllElements('ellipse'))
+      ..addAll(document.findAllElements('polygon'));
     
-    // Update SVG with filled colors
-    _filledRegions.forEach((id, color) {
-      // Convert color to hex string
-      final hexColor = '#${color.toARGB32().toRadixString(16).substring(2)}';
+    for (final element in elements) {
+      final id = element.getAttribute('id');
+      if (id != null) {
+        // Apply colors
+        Color? color;
+        if (widget.coloredRegions.containsKey(id)) {
+          color = widget.coloredRegions[id];
+        } else if (widget.predefinedColors.containsKey(id) && !widget.isCustomizing) {
+          color = widget.predefinedColors[id];
+        }
+        
+        if (color != null) {
+          element.setAttribute('fill', '#${color.value.toRadixString(16).substring(2)}');
+          element.setAttribute('fill-opacity', '1.0');
+        } else {
+          // Uncolored regions
+          element.setAttribute('fill', '#FFFFFF');
+          element.setAttribute('stroke', '#CCCCCC');
+          element.setAttribute('stroke-width', '2');
+        }
+        
+        // Add interaction class
+        element.setAttribute('class', 'colorable-region');
+        element.setAttribute('data-region-id', id);
+      }
+    }
+    
+    // Update or add number labels
+    _addNumberLabels(document);
+    
+    return document.toXmlString();
+  }
+
+  void _addNumberLabels(xml.XmlDocument document) {
+    // Remove existing number labels
+    final existingLabels = document.findAllElements('text')
+        .where((e) => e.getAttribute('class') == 'region-number')
+        .toList();
+    for (final label in existingLabels) {
+      label.parent?.children.remove(label);
+    }
+    
+    // Add new labels for numbered regions
+    final svg = document.findElements('svg').first;
+    widget.regionNumbers.forEach((regionId, number) {
+      // Skip if customizing and region is locked
+      if (widget.isCustomizing && widget.predefinedColors.containsKey(regionId)) {
+        return;
+      }
       
-      // Replace fill color for elements with this ID
-      // This is a simple approach - for production, use proper SVG parsing
-      updatedSvg = updatedSvg.replaceAllMapped(
-        RegExp('id="$id"[^>]*'),
-        (match) {
-          final matchStr = match.group(0)!;
-          // Remove existing fill and add new one
-          return '${matchStr.replaceAll(RegExp(r'fill="[^"]*"'), '')} fill="$hexColor"';
-        },
-      );
+      // Find the element
+      final element = document.findAllElements('*')
+          .firstWhere((e) => e.getAttribute('id') == regionId, 
+                      orElse: () => xml.XmlElement(xml.XmlName('null')));
+      
+      if (element.name.local != 'null') {
+        // Calculate center point (simplified - in production use proper bounds)
+        final text = xml.XmlElement(xml.XmlName('text'));
+        text.setAttribute('class', 'region-number');
+        text.setAttribute('x', '50'); // You'd calculate actual position
+        text.setAttribute('y', '50');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '14');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('fill', '#666666');
+        text.setAttribute('pointer-events', 'none');
+        text.innerText = number;
+        
+        svg.children.add(text);
+      }
     });
-    
-    return updatedSvg;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_svgContent == null) {
+    if (svgContent == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Column(
-      children: [
-        // SVG Display with interaction
-        Expanded(
-          child: GestureDetector(
-            onTapUp: (details) {
-              // This is simplified - in production you'd need to:
-              // 1. Convert tap coordinates to SVG coordinates
-              // 2. Find which path/region was tapped
-              // 3. Fill that region with selected color
-              // For now, showing the concept
-            },
-            child: InteractiveViewer(
-              minScale: 0.5,
-              maxScale: 4.0,
-              child: Center(
-                child: SvgPicture.string(
-                  _updateSvgWithColors(),
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  fit: BoxFit.contain,
-                ),
-              ),
+    return GestureDetector(
+      onTapDown: (details) {
+        // Handle tap detection
+        _handleTap(details.localPosition);
+      },
+      child: SvgPicture.string(
+        svgContent!,
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+
+  void _handleTap(Offset position) {
+    // In a production app, you would:
+    // 1. Parse SVG paths and calculate bounds
+    // 2. Check which region contains the tap point
+    // 3. Call onRegionTap with the appropriate region ID
+    
+    // For now, simplified example:
+    widget.regionNumbers.forEach((regionId, number) {
+      // Check if tap is within region bounds
+      // This is a placeholder - implement proper hit testing
+      widget.onRegionTap(regionId);
+    });
+  }
+}
+
+// Enhanced color picker for Magic Mode
+class MagicColorPicker extends StatelessWidget {
+  final List<Color> colors;
+  final Color? selectedColor;
+  final ValueChanged<Color> onColorSelected;
+  final String regionNumber;
+
+  const MagicColorPicker({
+    super.key,
+    required this.colors,
+    required this.selectedColor,
+    required this.onColorSelected,
+    required this.regionNumber,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
             ),
           ),
-        ),
-        
-        // Color Palette
-        Container(
-          height: 80,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: widget.colorPalette.length,
-            itemBuilder: (context, index) {
-              final color = widget.colorPalette[index];
-              final isSelected = _selectedColor == color;
-              
+          Text(
+            'Choose color for area $regionNumber',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: colors.map((color) {
+              final isSelected = selectedColor == color;
               return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedColor = color;
-                  });
-                  HapticFeedback.lightImpact();
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.elasticOut,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  width: isSelected ? 65 : 55,
-                  height: isSelected ? 65 : 55,
+                onTap: () => onColorSelected(color),
+                child: Container(
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? Colors.black : Colors.white,
-                      width: isSelected ? 3 : 2,
+                      color: isSelected ? Colors.black : Colors.grey[300]!,
+                      width: isSelected ? 3 : 1,
                     ),
                     boxShadow: [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.5),
-                        blurRadius: isSelected ? 15 : 8,
-                        spreadRadius: isSelected ? 2 : 0,
-                      ),
+                      if (isSelected)
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
                     ],
                   ),
+                  child: isSelected
+                      ? const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 28,
+                        )
+                      : null,
                 ),
               );
-            },
+            }).toList(),
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+        ],
+      ),
     );
   }
 }
 
-// Example usage in a screen:
-class SvgColoringScreen extends StatelessWidget {
-  const SvgColoringScreen({super.key});
+// Integration helper for Scene Mode
+class MagicObjectSceneItem extends StatelessWidget {
+  final MagicSceneObject object;
+  final VoidCallback onTap;
+
+  const MagicObjectSceneItem({
+    super.key,
+    required this.object,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('SVG Coloring'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 80,
+        height: 80,
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: _buildColoredSvg(),
+        ),
       ),
-      body: SvgColoringWidget(
-        svgPath: 'assets/svg/BottleFriends.svg',
-        colorPalette: [
-          colorScheme.primary,
-          colorScheme.secondary,
-          colorScheme.tertiary,
-          colorScheme.primaryContainer,
-          colorScheme.secondaryContainer,
-          const Color(0xFFE93A45), // Red
-          const Color(0xFFFABF23), // Yellow
-          const Color(0xFFFF8A3D), // Orange
-          const Color(0xFF51BAA3), // Teal
-          const Color(0xFF9B72AA), // Purple
+    );
+  }
+
+  Widget _buildColoredSvg() {
+    // In production, this would render the SVG with saved colors
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.pets,
+            size: 32,
+            color: Colors.grey[600],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            object.name,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );

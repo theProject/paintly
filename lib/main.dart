@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'screens/main_navigation_screen.dart';
+import 'screens/magic_mode_screen.dart';
+import 'magic/screens/magic_category_screen.dart';
+import 'magic/screens/enhanced_magic_coloring_screen.dart';
+
 import 'providers/coloring_provider.dart';
 import 'providers/settings_provider.dart';
 import 'providers/scene_provider.dart';
@@ -35,13 +40,13 @@ class MyApp extends StatelessWidget {
                 seedColor: const Color(0xFFFABF23), // Yellow from new palette
                 brightness: Brightness.light,
               ).copyWith(
-                primary: const Color(0xFFE93A45), // Red
-                secondary: const Color(0xFFFABF23), // Yellow
-                tertiary: const Color(0xFF51BAA3), // Teal
-                surface: const Color(0xFFFFF8F0), // Light cream surface
+                primary: const Color(0xFFE93A45),       // Red
+                secondary: const Color(0xFFFABF23),     // Yellow
+                tertiary: const Color(0xFF51BAA3),      // Teal
+                surface: const Color(0xFFFFF8F0),       // Light cream
                 onPrimary: Colors.white,
                 onSecondary: Colors.black,
-                primaryContainer: const Color(0xFFFF8A3D), // Orange
+                primaryContainer: const Color(0xFFFF8A3D),   // Orange
                 secondaryContainer: const Color(0xFF9B72AA), // Purple
               ),
               elevatedButtonTheme: ElevatedButtonThemeData(
@@ -64,6 +69,11 @@ class MyApp extends StatelessWidget {
               ),
             ),
             home: const MainNavigationScreen(),
+            routes: {
+              '/magic': (context) => const MagicModeScreen(),
+              '/magic/category': (context) => const MagicCategoryScreen(),
+              '/magic/coloring': (context) => const EnhancedMagicColoringScreen(),
+            },
             debugShowCheckedModeBanner: false,
           );
         },

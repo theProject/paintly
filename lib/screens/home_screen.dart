@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/pixel_art.dart';
 import 'coloring_screen.dart';
 
@@ -114,13 +115,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Reduced from 10
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Reduced from 10
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.02), // Reduced from 0.15 to 5%
+              color: Colors.white.withValues(alpha: 0.05), // Reduced from 0.15 to 5%
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2), // Reduced from 0.2
+                color: Colors.white.withValues(alpha: 0.1), // Reduced from 0.2
                 width: 0.5, // Thinner border
               ),
               boxShadow: [
@@ -181,4 +182,84 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+// Custom painter to render pixel art preview with progress
+class PixelArtPreviewPainter extends CustomPainter {
+  final PixelArt pixelArt;
+  final double cellSize;
+  final Map<String, dynamic>? progress;
+
+  PixelArtPreviewPainter({
+    required this.pixelArt,
+    required this.cellSize,
+    this.progress,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.fill;
+
+    // Get color data from progress or use defaults
+    final List<List<int>>? coloredPixels = progress?['coloredPixels'];
+
+    // Draw background grid
+    paint.color = Colors.grey[100]!;
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+
+    // Draw colored pixels
+    for (int y = 0; y < pixelArt.gridSize; y++) {
+      for (int x = 0; x < pixelArt.gridSize; x++) {
+        final colorIndex = pixelArt.pixels[y][x];
+        if (colorIndex > 0) {
+          // Check if this pixel has been colored
+          final isColored = coloredPixels != null && 
+                           coloredPixels[y][x] > 0;
+          
+          if (isColored) {
+            // Use the actual color from progress
+            paint.color = pixelArt.colorPalette[coloredPixels[y][x]];
+          } else {
+            // Show as outline/grey for uncolored
+            paint.color = Colors.grey[300]!;
+          }
+          
+          canvas.drawRect(
+            Rect.fromLTWH(
+              x * cellSize,
+              y * cellSize,
+              cellSize - 0.5, // Small gap for grid effect
+              cellSize - 0.5,
+            ),
+            paint,
+          );
+        }
+      }
+    }
+    
+    // Draw subtle grid lines
+    paint.color = Colors.grey.withValues(alpha: 0.1);
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 0.5;
+    
+    for (int i = 0; i <= pixelArt.gridSize; i++) {
+      // Vertical lines
+      canvas.drawLine(
+        Offset(i * cellSize, 0),
+        Offset(i * cellSize, size.height),
+        paint,
+      );
+      // Horizontal lines
+      canvas.drawLine(
+        Offset(0, i * cellSize),
+        Offset(size.width, i * cellSize),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant PixelArtPreviewPainter oldDelegate) => 
+      oldDelegate.progress != progress;
 }
