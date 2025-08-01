@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
-import '../providers/settings_provider.dart';
+import '../../providers/settings_provider.dart';
 import 'magic_category_screen.dart';
 
 class MagicModeScreen extends StatefulWidget {

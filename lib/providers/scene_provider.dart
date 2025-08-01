@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/pixel_art.dart';
-import 'coloring_screen.dart';
+import '../screens/coloring_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/magic_object.dart';  // If referencing MagicSceneObject
 
 /// ─────────────────────────────────────────────────────────────────────────────
 /// PROVIDER & DATA MODELS

@@ -5,9 +5,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../providers/settings_provider.dart';
+import '../../providers/settings_provider.dart';
 import 'magic_mode_screen.dart';
-import 'magic_coloring_screen.dart';
+import '../../magic/';
 
 class MagicCategoryScreen extends StatefulWidget {
   final MagicCategory category;
