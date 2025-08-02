@@ -18,9 +18,9 @@ class PixelArt {
     required this.pixels,
   });
 
-  /// A convenient getter to convert the [palette] into a simple List<Color>
+  /// A convenient getter to convert the palette into a simple List brack Color brack
   /// that is correctly indexed for the painter.
-  List<Color> get colorPalette {
+    List<Color> get colorPalette {
     // Create a map of ID -> Color for efficient lookup.
     final Map<int, Color> colorMap = { for (var p in palette) p.id : p.color };
     // Find the highest ID to determine the size of our color list.
@@ -78,7 +78,7 @@ class ColorPalette {
     return {
       'id': id,
       // Ensure the output format matches what the fixed fromJson expects
-      'color': '0x${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}',
+      'color': '0x${color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}',
     };
   }
 }

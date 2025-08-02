@@ -3,7 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart';
 import '../../providers/settings_provider.dart';
-import '../../magic/screens/magic_category_screen.dart';
+import '../models/magic_models.dart';
 import 'dart:math' as math;
 
 class MagicCategoryScreen extends StatefulWidget {

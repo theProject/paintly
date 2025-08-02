@@ -114,8 +114,12 @@ class SceneProvider extends ChangeNotifier {
       }).toList();
     }
 
-    // TODO: filter by category once SceneData supports it
-    // For now, returning all filtered scenes
+    // Filter by category if implemented
+    if (_selectedCategory != null && _selectedCategory!.isNotEmpty) {
+      filtered = filtered.where((scene) {
+        return scene.category == _selectedCategory;
+      }).toList();
+    }
     
     return filtered;
   }

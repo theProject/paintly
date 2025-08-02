@@ -42,7 +42,6 @@ class PaintedApp extends StatelessWidget {
         secondary: const Color(0xFF4ECDC4),
         tertiary: const Color(0xFF45B7D1),
         surface: const Color(0xFFF5F5F5),
-        background: const Color(0xFFFAFAFA),
       ),
       textTheme: GoogleFonts.quicksandTextTheme().copyWith(
         headlineLarge: const TextStyle(fontWeight: FontWeight.bold),
@@ -64,7 +63,7 @@ class PaintedApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),

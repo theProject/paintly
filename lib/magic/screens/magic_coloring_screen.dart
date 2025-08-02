@@ -4,8 +4,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:confetti/confetti.dart';
 import '../../providers/scene_provider.dart';
 import '../../providers/settings_provider.dart';
-import '../../widgets/color_palette_widget.dart';
+import "../../widgets/color_palette_widget.dart";
 import '../../models/magic_object.dart';
+import '../models/magic_models.dart';
 import 'dart:math' as math;
 
 class MagicColoringScreen extends StatefulWidget {

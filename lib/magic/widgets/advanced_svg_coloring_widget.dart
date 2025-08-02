@@ -30,7 +30,7 @@ class AdvancedSvgColoringWidget extends StatefulWidget {
   });
 
   @override
-  _AdvancedSvgColoringWidgetState createState() =>
+  State<AdvancedSvgColoringWidget> createState() =>
       _AdvancedSvgColoringWidgetState();
 }
 
@@ -171,7 +171,7 @@ class _SvgColoringPainter extends CustomPainter {
       if (region.id == highlightedRegion) {
         final highlight = Paint()
           ..style = PaintingStyle.fill
-          ..color = Colors.yellow.withOpacity(0.3);
+          ..color = Colors.yellow.withValues(alpha: 0.3);
         canvas.drawPath(region.path, highlight);
       }
 

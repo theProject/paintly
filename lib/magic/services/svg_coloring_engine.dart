@@ -259,9 +259,8 @@ class SvgColoringEngine {
     
     final fillOpacity = element.getAttribute('fill-opacity');
     if (fillOpacity != null) {
-      paint.color = paint.color.withOpacity(
-        double.tryParse(fillOpacity) ?? paint.color.opacity,
-      );
+      final opacity = double.tryParse(fillOpacity) ?? paint.color.a;
+      paint.color = paint.color.withValues(alpha: opacity);
     }
     final sw = element.getAttribute('stroke-width');
     if (sw != null) {
