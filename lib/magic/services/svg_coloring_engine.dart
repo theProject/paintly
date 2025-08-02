@@ -1,9 +1,7 @@
 // lib/magic/services/svg_coloring_engine.dart
 
-import 'dart:ui' as ui;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:path_drawing/path_drawing.dart';
 

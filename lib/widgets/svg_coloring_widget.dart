@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Added for rootBundle
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:xml/xml.dart' as xml;
+import '../providers/scene_provider.dart'; // Added for MagicSceneObject
 
 // Replace the placeholder CustomPaint in magic_coloring_screen.dart with this widget:
 
@@ -51,11 +53,12 @@ class _SvgColoringWidgetState extends State<SvgColoringWidget> {
     final document = xml.XmlDocument.parse(originalSvg);
     
     // Process each path/shape element
-    final elements = document.findAllElements('path')
-      ..addAll(document.findAllElements('circle'))
-      ..addAll(document.findAllElements('rect'))
-      ..addAll(document.findAllElements('ellipse'))
-      ..addAll(document.findAllElements('polygon'));
+    final List<xml.XmlElement> elements = [];
+    elements.addAll(document.findAllElements('path'));
+    elements.addAll(document.findAllElements('circle'));
+    elements.addAll(document.findAllElements('rect'));
+    elements.addAll(document.findAllElements('ellipse'));
+    elements.addAll(document.findAllElements('polygon'));
     
     for (final element in elements) {
       final id = element.getAttribute('id');
@@ -69,7 +72,7 @@ class _SvgColoringWidgetState extends State<SvgColoringWidget> {
         }
         
         if (color != null) {
-          element.setAttribute('fill', '#${color.value.toRadixString(16).substring(2)}');
+          element.setAttribute('fill', '#${color.toARGB32().toRadixString(16).substring(2)}');
           element.setAttribute('fill-opacity', '1.0');
         } else {
           // Uncolored regions

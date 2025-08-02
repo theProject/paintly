@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'home_screen.dart';
 import 'import_image_screen.dart';
-import 'magic_mode_screen.dart';
+import '../magic/screens/magic_mode_screen.dart';
 import '../scene_mode/screens/scene_home_screen.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/settings_dialog.dart';

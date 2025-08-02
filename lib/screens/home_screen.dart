@@ -1,9 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui'; // for ImageFilter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/pixel_art.dart';
 import 'coloring_screen.dart';
 
@@ -118,10 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Reduced from 10
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05), // Reduced from 0.15 to 5%
+              color: Colors.white.withOpacity(0.05), // Reduced from 0.15 to 5%
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1), // Reduced from 0.2
+                color: Colors.white.withOpacity(0.1), // Reduced from 0.2
                 width: 0.5, // Thinner border
               ),
               boxShadow: [
@@ -129,10 +130,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: [
                     colorScheme.primary,
                     colorScheme.secondary,
-                    colorScheme.tertiary,
-                    const Color(0xFF9DDAC8),
-                    const Color(0xFF8B96A9),
-                  ][index % 5].withValues(alpha: 0.1),
+                    colorScheme.secondaryContainer,
+                    Color(0xFF9DDAC8),
+                    Color(0xFF8B96A9),
+                  ][index % 5].withOpacity(0.1),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
@@ -239,7 +240,7 @@ class PixelArtPreviewPainter extends CustomPainter {
     }
     
     // Draw subtle grid lines
-    paint.color = Colors.grey.withValues(alpha: 0.1);
+    paint.color = Colors.grey.withOpacity(0.1);
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 0.5;
     

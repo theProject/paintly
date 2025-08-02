@@ -78,7 +78,7 @@ class SettingsDialog extends StatelessWidget {
                                 HapticFeedback.lightImpact();
                                 settings.toggleMusic();
                               },
-                              color: const Color(0xFFFF8FAB), // Pink
+                              color: Color(0xFFFF8FAB), // Pink
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -93,7 +93,7 @@ class SettingsDialog extends StatelessWidget {
                                 HapticFeedback.lightImpact();
                                 settings.toggleSound();
                               },
-                              color: const Color(0xFFFFD68C), // Yellow
+                              color: Color(0xFFFFD68C), // Yellow
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -109,7 +109,7 @@ class SettingsDialog extends StatelessWidget {
                                 HapticFeedback.lightImpact();
                                 settings.toggleDragToPaint();
                               },
-                              color: const Color(0xFF9DDAC8), // Mint
+                              color: Color(0xFF9DDAC8), // Mint
                             ),
                           ),
                         ],

@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../../providers/settings_provider.dart';
 import 'magic_category_screen.dart';
+import '../data/magic_categories.dart';  // Import the shared MagicCategory
 
 class MagicModeScreen extends StatefulWidget {
   const MagicModeScreen({super.key});
@@ -14,44 +15,8 @@ class MagicModeScreen extends StatefulWidget {
 }
 
 class _MagicModeScreenState extends State<MagicModeScreen> {
-  // Define categories with their properties
-  final List<MagicCategory> categories = [
-    MagicCategory(
-      id: 'characters',
-      name: 'Characters',
-      icon: Icons.face_rounded,
-      color: const Color(0xFFFF6B6B),
-      description: 'Color fun characters!',
-    ),
-    MagicCategory(
-      id: 'farm',
-      name: 'Farm',
-      icon: Icons.agriculture_rounded,
-      color: const Color(0xFF4ECDC4),
-      description: 'Animals and farm life',
-    ),
-    MagicCategory(
-      id: 'ocean',
-      name: 'Ocean',
-      icon: Icons.water_rounded,
-      color: const Color(0xFF45B7D1),
-      description: 'Underwater adventures',
-    ),
-    MagicCategory(
-      id: 'city',
-      name: 'City',
-      icon: Icons.location_city_rounded,
-      color: const Color(0xFF96CEB4),
-      description: 'Urban exploration',
-    ),
-    MagicCategory(
-      id: 'forest',
-      name: 'Forest',
-      icon: Icons.forest_rounded,
-      color: const Color(0xFF88D8B0),
-      description: 'Nature and wildlife',
-    ),
-  ];
+  // Use categories from MagicCategories class
+  final List<MagicCategory> categories = MagicCategories.getAllCategories();
 
   @override
   Widget build(BuildContext context) {
@@ -219,21 +184,4 @@ class _MagicModeScreenState extends State<MagicModeScreen> {
       ),
     );
   }
-}
-
-// Data model for categories
-class MagicCategory {
-  final String id;
-  final String name;
-  final IconData icon;
-  final Color color;
-  final String description;
-
-  MagicCategory({
-    required this.id,
-    required this.name,
-    required this.icon,
-    required this.color,
-    required this.description,
-  });
 }

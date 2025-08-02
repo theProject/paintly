@@ -73,9 +73,11 @@ class MagicObject {
       'svgPath': svgPath,
       'previewIcon': previewIcon,
       'predefinedColors': predefinedColors.map((key, value) => 
-        MapEntry(key, value.value)),
-      'customizableRegions': customizableRegions.map((key, value) => 
-        MapEntry(key, value.map((color) => color.value).toList())),
+      MapEntry(key, value.toARGB32()),
+      ),
+      'customizableRegions': customizableRegions.map((key, value) =>
+        MapEntry(key, value.map((color) => color.toARGB32()).toList()),
+      ),
     };
   }
 

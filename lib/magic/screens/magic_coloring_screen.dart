@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,14 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:confetti/confetti.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../providers/settings_provider.dart';
 import '../../providers/scene_provider.dart';
 import '../../models/magic_object.dart';
 import '../data/magic_categories.dart';
 import '../widgets/advanced_svg_coloring_widget.dart';
-import '../widgets/magic_color_picker.dart';
 
 class MagicColoringScreen extends StatefulWidget {
   final MagicObject object;
@@ -121,8 +118,6 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: Stack(
@@ -264,7 +259,7 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: widget.category.color.withOpacity(0.2),
+            color: widget.category.color.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -305,7 +300,7 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -365,7 +360,7 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: color.withOpacity(0.4),
+                            color: color.withValues(alpha: 0.4),
                             blurRadius: isSelected ? 12 : 8,
                             spreadRadius: isSelected ? 2 : 0,
                           ),
@@ -401,7 +396,7 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
         animation: _hintController,
         builder: (context, child) {
           return Container(
-            color: Colors.black.withOpacity(0.5 * _hintController.value),
+            color: Colors.black.withValues(alpha: 0.5 * _hintController.value),
             child: Center(
               child: ScaleTransition(
                 scale: _hintController,
@@ -453,7 +448,7 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (true) // Replace with actual Lottie file check
-              Icon(
+              const Icon(
                 Icons.celebration_rounded,
                 size: 120,
                 color: widget.category.color,
@@ -508,7 +503,7 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('This part is locked'),
-          backgroundColor: widget.category.color,
+                            backgroundColor: widget.category.color,
           duration: const Duration(seconds: 1),
         ),
       );
@@ -574,7 +569,7 @@ class _MagicColoringScreenState extends State<MagicColoringScreen>
     final prefs = await SharedPreferences.getInstance();
     
     // Save color data
-    final colorData = coloredRegions.map((key, value) => MapEntry(key, value.value));
+    final colorData = coloredRegions.map((key, value) => MapEntry(key, value.toARGB32()));
     await prefs.setString(
       'magic_colors_${widget.category.id}_${widget.object.id}',
       json.encode(colorData),

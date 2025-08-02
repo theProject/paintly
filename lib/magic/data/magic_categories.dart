@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../models/magic_object.dart';
+import '../../models/magic_object.dart'; // Assuming this path is correct for your project
+
 
 /// Complete category and object definitions for Magic Mode
 class MagicCategories {
@@ -50,13 +51,14 @@ class MagicCategories {
   }
 
   /// All objects organized by category
+  /// I've corrected the syntax and structure of your objects below.
   static final Map<String, List<MagicObject>> categoryObjects = {
     'characters': [
       MagicObject(
         id: 'princess',
         name: 'Princess',
         svgPath: 'assets/svg/magic/characters/princess.svg',
-        previewIcon: '👸',
+        previewIcon: '�',
         predefinedColors: {
           'face': const Color(0xFFFFDBBF),
           'eyes': const Color(0xFF4A90E2),
@@ -150,7 +152,6 @@ class MagicCategories {
             const Color(0xFFC0C0C0), // Silver
             const Color(0xFFFFFFFF), // White
             const Color(0xFFD2691E), // Chocolate
-            const Color(0xFFFFD700), // Gold
           ],
           'tail': [
             const Color(0xFF000000), // Black
@@ -160,6 +161,40 @@ class MagicCategories {
           ],
         },
       ),
+      MagicObject(
+        id: 'fairy',
+        name: 'Fairy',
+        svgPath: 'assets/svg/magic/characters/fairy.svg',
+        previewIcon: '🧚‍♀️',
+        predefinedColors: {
+          'face': const Color(0xFFFFDBBF),
+          'eyes': const Color(0xFF90EE90),
+          'hair': const Color(0xFFFFD700),
+        },
+        customizableRegions: {
+          'dress': [
+            const Color(0xFFFFB6C1), // Light Pink
+            const Color(0xFFE6E6FA), // Lavender
+            const Color(0xFF98FB98), // Pale Green
+            const Color(0xFFADD8E6), // Light Blue
+            const Color(0xFFFFF0F5), // Lavender Blush
+          ],
+          'wings': [
+            const Color(0xFFE6E6FA), // Lavender
+            const Color(0xFF87CEEB), // Sky Blue
+            const Color(0xFFFFB6C1), // Light Pink
+            const Color(0xFF98FB98), // Pale Green
+            const Color(0xFFF0E68C), // Khaki
+          ],
+          'wand_star': [
+            const Color(0xFFFFD700), // Gold
+            const Color(0xFFC0C0C0), // Silver
+            const Color(0xFFFF69B4), // Hot Pink
+          ],
+        },
+      ),
+    ],
+    'farm': [
       MagicObject(
         id: 'farmer',
         name: 'Farmer',
@@ -192,8 +227,143 @@ class MagicCategories {
           ],
         },
       ),
+      MagicObject(
+        id: 'chicken',
+        name: 'Chicken',
+        svgPath: 'assets/svg/magic/farm/chicken.svg',
+        previewIcon: '🐔',
+        predefinedColors: {
+          'beak': const Color(0xFFFFA500),
+          'legs': const Color(0xFFFF8C00),
+          'eyes': const Color(0xFF000000),
+          'comb': const Color(0xFFDC143C),
+          'wattle': const Color(0xFFDC143C),
+        },
+        customizableRegions: {
+          'body': [
+            const Color(0xFFFFFFFF), // White
+            const Color(0xFFF5DEB3), // Wheat
+            const Color(0xFF8B4513), // Saddle Brown
+            const Color(0xFF000000), // Black
+            const Color(0xFFFF6347), // Tomato Red
+            const Color(0xFFDEB887), // Burlywood
+          ],
+          'tail_feathers': [
+            const Color(0xFF8B4513), // Saddle Brown
+            const Color(0xFF000000), // Black
+            const Color(0xFFFFD700), // Gold
+            const Color(0xFF228B22), // Forest Green
+            const Color(0xFF4B0082), // Indigo
+          ],
+          'wing_details': [
+            const Color(0xFFF5DEB3), // Wheat
+            const Color(0xFF8B4513), // Saddle Brown
+            const Color(0xFF000000), // Black
+            const Color(0xFFD2691E), // Chocolate
+          ],
+        },
+      ),
+      MagicObject(
+        id: 'cow',
+        name: 'Cow',
+        svgPath: 'assets/svg/magic/farm/cow.svg',
+        previewIcon: '🐄',
+        predefinedColors: {
+          'nose': const Color(0xFFFFB6C1),
+          'hooves': const Color(0xFF2F4F4F),
+          'eyes': const Color(0xFF000000),
+          'horns': const Color(0xFFF5DEB3),
+          'udder': const Color(0xFFFFB6C1),
+        },
+        customizableRegions: {
+          'body': [
+            const Color(0xFFFFFFFF), // White
+            const Color(0xFF8B4513), // Brown
+            const Color(0xFF000000), // Black
+            const Color(0xFFDEB887), // Tan
+            const Color(0xFFD2691E), // Chocolate
+          ],
+          'spots': [
+            const Color(0xFF000000), // Black
+            const Color(0xFF8B4513), // Brown
+            const Color(0xFF696969), // Dim Gray
+            const Color(0xFFD2691E), // Chocolate
+          ],
+        },
+      ),
+      MagicObject(
+        id: 'pig',
+        name: 'Pig',
+        svgPath: 'assets/svg/magic/farm/pig.svg',
+        previewIcon: '🐷',
+        predefinedColors: {
+          'snout': const Color(0xFFFF69B4),
+          'eyes': const Color(0xFF000000),
+          'hooves': const Color(0xFF8B4513),
+          'tail': const Color(0xFFFFB6C1),
+        },
+        customizableRegions: {
+          'body': [
+            const Color(0xFFFFB6C1), // Light Pink
+            const Color(0xFFFF69B4), // Hot Pink
+            const Color(0xFFFFC0CB), // Pink
+            const Color(0xFF8B4513), // Brown (muddy)
+            const Color(0xFFDEB887), // Burlywood
+          ],
+          'ears': [
+            const Color(0xFFFFB6C1), // Light Pink
+            const Color(0xFFFF69B4), // Hot Pink
+            const Color(0xFFFFC0CB), // Pink
+          ],
+        },
+      ),
+      MagicObject(
+        id: 'sheep',
+        name: 'Sheep',
+        svgPath: 'assets/svg/magic/farm/sheep.svg',
+        previewIcon: '🐑',
+        predefinedColors: {
+          'face': const Color(0xFF2F4F4F),
+          'eyes': const Color(0xFF000000),
+          'hooves': const Color(0xFF000000),
+        },
+        customizableRegions: {
+          'wool': [
+            const Color(0xFFFFFFFF), // White
+            const Color(0xFFF5F5F5), // White Smoke
+            const Color(0xFFD3D3D3), // Light Gray
+            const Color(0xFF000000), // Black
+            const Color(0xFF8B4513), // Brown
+          ],
+        },
+      ),
+      MagicObject(
+        id: 'horse',
+        name: 'Horse',
+        svgPath: 'assets/svg/magic/farm/horse.svg',
+        previewIcon: '🐴',
+        predefinedColors: {
+          'eyes': const Color(0xFF000000),
+          'hooves': const Color(0xFF000000),
+          'nostrils': const Color(0xFF000000),
+        },
+        customizableRegions: {
+          'body': [
+            const Color(0xFF8B4513), // Saddle Brown
+            const Color(0xFF000000), // Black
+            const Color(0xFFFFFFFF), // White
+            const Color(0xFFD2691E), // Chocolate
+            const Color(0xFFA0522D), // Sienna
+            const Color(0xFF696969), // Dim Gray
+          ],
+          'mane': [
+            const Color(0xFF000000), // Black
+            const Color(0xFF8B4513), // Brown
+            const Color(0xFFFFFFFF), // White
+          ],
+        },
+      ),
     ],
-    
     'ocean': [
       MagicObject(
         id: 'fish',
@@ -366,7 +536,6 @@ class MagicCategories {
         },
       ),
     ],
-    
     'city': [
       MagicObject(
         id: 'car',
@@ -529,7 +698,6 @@ class MagicCategories {
         },
       ),
     ],
-    
     'forest': [
       MagicObject(
         id: 'tree',
@@ -732,7 +900,7 @@ class MagicCategory {
       'id': id,
       'name': name,
       'icon': icon.codePoint,
-      'color': color.value,
+      'color': color.toARGB32(),
       'description': description,
     };
   }
@@ -748,175 +916,27 @@ class MagicCategory {
     );
   }
 }
-            Color(0xFF00FFFF), // Cyan
-          ],
-        },
-      ),
-      MagicObject(
-        id = 'fairy',
-        name = 'Fairy',
-        svgPath = 'assets/svg/magic/characters/fairy.svg',
-        previewIcon = '🧚‍♀️',
-        predefinedColors = {
-          'face': const Color(0xFFFFDBBF),
-          'eyes': const Color(0xFF90EE90),
-          'hair': const Color(0xFFFFD700),
-        },
-        customizableRegions = {
-          'dress': [
-            const Color(0xFFFFB6C1), // Light Pink
-            const Color(0xFFE6E6FA), // Lavender
-            const Color(0xFF98FB98), // Pale Green
-            const Color(0xFFADD8E6), // Light Blue
-            const Color(0xFFFFF0F5), // Lavender Blush
-          ],
-          'wings': [
-            const Color(0xFFE6E6FA), // Lavender
-            const Color(0xFF87CEEB), // Sky Blue
-            const Color(0xFFFFB6C1), // Light Pink
-            const Color(0xFF98FB98), // Pale Green
-            const Color(0xFFF0E68C), // Khaki
-          ],
-          'wand_star': [
-            const Color(0xFFFFD700), // Gold
-            const Color(0xFFC0C0C0), // Silver
-            const Color(0xFFFF69B4), // Hot Pink
-          ],
-        },
-      ),
-    ],
-    
-    'farm': [
-      MagicObject(
-        id = 'chicken',
-        name = 'Chicken',
-        svgPath = 'assets/svg/magic/farm/chicken.svg',
-        previewIcon = '🐔',
-        predefinedColors = {
-          'beak': const Color(0xFFFFA500),
-          'legs': const Color(0xFFFF8C00),
-          'eyes': const Color(0xFF000000),
-          'comb': const Color(0xFFDC143C),
-          'wattle': const Color(0xFFDC143C),
-        },
-        customizableRegions = {
-          'body': [
-            const Color(0xFFFFFFFF), // White
-            const Color(0xFFF5DEB3), // Wheat
-            const Color(0xFF8B4513), // Saddle Brown
-            const Color(0xFF000000), // Black
-            const Color(0xFFFF6347), // Tomato Red
-            const Color(0xFFDEB887), // Burlywood
-          ],
-          'tail_feathers': [
-            const Color(0xFF8B4513), // Saddle Brown
-            const Color(0xFF000000), // Black
-            const Color(0xFFFFD700), // Gold
-            const Color(0xFF228B22), // Forest Green
-            const Color(0xFF4B0082), // Indigo
-          ],
-          'wing_details': [
-            const Color(0xFFF5DEB3), // Wheat
-            const Color(0xFF8B4513), // Saddle Brown
-            const Color(0xFF000000), // Black
-            const Color(0xFFD2691E), // Chocolate
-          ],
-        },
-      ),
-      MagicObject(
-        id = 'cow',
-        name = 'Cow',
-        svgPath = 'assets/svg/magic/farm/cow.svg',
-        previewIcon = '🐄',
-        predefinedColors = {
-          'nose': const Color(0xFFFFB6C1),
-          'hooves': const Color(0xFF2F4F4F),
-          'eyes': const Color(0xFF000000),
-          'horns': const Color(0xFFF5DEB3),
-          'udder': const Color(0xFFFFB6C1),
-        },
-        customizableRegions = {
-          'body': [
-            const Color(0xFFFFFFFF), // White
-            const Color(0xFF8B4513), // Brown
-            const Color(0xFF000000), // Black
-            const Color(0xFFDEB887), // Tan
-            const Color(0xFFD2691E), // Chocolate
-          ],
-          'spots': [
-            const Color(0xFF000000), // Black
-            const Color(0xFF8B4513), // Brown
-            const Color(0xFF696969), // Dim Gray
-            const Color(0xFFD2691E), // Chocolate
-          ],
-        },
-      ),
-      MagicObject(
-        id = 'pig',
-        name = 'Pig',
-        svgPath = 'assets/svg/magic/farm/pig.svg',
-        previewIcon = '🐷',
-        predefinedColors = {
-          'snout': const Color(0xFFFF69B4),
-          'eyes': const Color(0xFF000000),
-          'hooves': const Color(0xFF8B4513),
-          'tail': const Color(0xFFFFB6C1),
-        },
-        customizableRegions = {
-          'body': [
-            const Color(0xFFFFB6C1), // Light Pink
-            const Color(0xFFFF69B4), // Hot Pink
-            const Color(0xFFFFC0CB), // Pink
-            const Color(0xFF8B4513), // Brown (muddy)
-            const Color(0xFFDEB887), // Burlywood
-          ],
-          'ears': [
-            const Color(0xFFFFB6C1), // Light Pink
-            const Color(0xFFFF69B4), // Hot Pink
-            const Color(0xFFFFC0CB), // Pink
-          ],
-        },
-      ),
-      MagicObject(
-        id = 'sheep',
-        name = 'Sheep',
-        svgPath = 'assets/svg/magic/farm/sheep.svg',
-        previewIcon = '🐑',
-        predefinedColors = {
-          'face': const Color(0xFF2F4F4F),
-          'eyes': const Color(0xFF000000),
-          'hooves': const Color(0xFF000000),
-        },
-        customizableRegions = {
-          'wool': [
-            const Color(0xFFFFFFFF), // White
-            const Color(0xFFF5F5F5), // White Smoke
-            const Color(0xFFD3D3D3), // Light Gray
-            const Color(0xFF000000), // Black
-            const Color(0xFF8B4513), // Brown
-          ],
-        },
-      ),
-      MagicObject(
-        id = 'horse',
-        name = 'Horse',
-        svgPath = 'assets/svg/magic/farm/horse.svg',
-        previewIcon = '🐴',
-        predefinedColors = {
-          'eyes': const Color(0xFF000000),
-          'hooves': const Color(0xFF000000),
-          'nostrils': const Color(0xFF000000),
-        },
-        customizableRegions = {
-          'body': [
-            const Color(0xFF8B4513), // Saddle Brown
-            const Color(0xFF000000), // Black
-            const Color(0xFFFFFFFF), // White
-            const Color(0xFFD2691E), // Chocolate
-            const Color(0xFFA0522D), // Sienna
-            const Color(0xFF696969), // Dim Gray
-          ],
-          'mane': [
-            const Color(0xFF000000), // Black
-            const Color(0xFF8B4513), // Brown
-            const Color(0xFFFFFFFF), // White
+
+// NOTE: The MagicObject class definition is assumed to be in the imported file:
+// import '../../models/magic_object.dart';
+// It should look something like this:
+
+/*
+class MagicObject {
+  final String id;
+  final String name;
+  final String svgPath;
+  final String previewIcon;
+  final Map<String, Color> predefinedColors;
+  final Map<String, List<Color>> customizableRegions;
+
+  MagicObject({
+    required this.id,
+    required this.name,
+    required this.svgPath,
+    required this.previewIcon,
+    required this.predefinedColors,
+    required this.customizableRegions,
+  });
+}
+*/

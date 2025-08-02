@@ -20,25 +20,25 @@ class _IntroScreenState extends State<IntroScreen> {
       title: 'Welcome to Colorful Adventures!',
       description: 'A magical world of pixel art and creative coloring awaits you',
       icon: Icons.palette_rounded,
-      color: const Color(0xFFE93A45), // Red
+      color: Color(0xFFE93A45), // Red
     ),
     IntroPage(
       title: 'Pixel Perfect Fun',
       description: 'Choose from dozens of pixel art designs and bring them to life with vibrant colors',
       icon: Icons.grid_on_rounded,
-      color: const Color(0xFFFABF23), // Yellow
+      color: Color(0xFFFABF23), // Yellow
     ),
     IntroPage(
       title: 'Scene Coloring',
       description: 'Create beautiful scenes with our vector-based coloring mode',
       icon: Icons.landscape_rounded,
-      color: const Color(0xFF51BAA3), // Teal
+      color: Color(0xFF51BAA3), // Teal
     ),
     IntroPage(
       title: 'Import Your Photos',
       description: 'Turn your favorite photos into pixel art masterpieces',
       icon: Icons.add_photo_alternate_rounded,
-      color: const Color(0xFF9B72AA), // Purple
+      color: Color(0xFF9B72AA), // Purple
     ),
   ];
 

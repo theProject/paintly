@@ -3,6 +3,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_drawing/path_drawing.dart';
 
 import '../services/svg_coloring_engine.dart';
 
@@ -18,7 +19,7 @@ class AdvancedSvgColoringWidget extends StatefulWidget {
   final void Function(String) onRegionTap;
 
   const AdvancedSvgColoringWidget({
-    Key? key,
+    super.key,
     required this.svgPath,
     required this.coloredRegions,
     required this.regionNumbers,
@@ -26,7 +27,7 @@ class AdvancedSvgColoringWidget extends StatefulWidget {
     required this.customizableRegions,
     required this.isCustomizing,
     required this.onRegionTap,
-  }) : super(key: key);
+  });
 
   @override
   _AdvancedSvgColoringWidgetState createState() =>

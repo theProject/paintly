@@ -5,8 +5,7 @@ import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
 import '../models/pixel_art.dart';
 import '../screens/coloring_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/magic_object.dart';  // If referencing MagicSceneObject
+// If referencing MagicSceneObject
 
 /// ─────────────────────────────────────────────────────────────────────────────
 /// PROVIDER & DATA MODELS
@@ -65,6 +64,8 @@ class SceneProvider extends ChangeNotifier {
     if (_currentScene == null) return false;
     return _filledRegions.length == _currentScene!.colorRegions.length;
   }
+
+  void addMagicObject({required String categoryId, required String objectId, required String name, required String svgPath, required Map<String, Color> colors}) {}
 }
 
 class SceneData {
@@ -221,8 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     cs.primary,
                     cs.secondary,
                     cs.tertiary,
-                    const Color(0xFF9DDAC8),
-                    const Color(0xFF8B96A9),
+                    Color(0xFF9DDAC8),
+                    Color(0xFF8B96A9),
                   ][idx % 5].withOpacity(0.1),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
@@ -306,7 +307,7 @@ class PixelArtPreviewPainter extends CustomPainter {
         if (idx > 0) {
           final done = colored != null && colored[y][x] > 0;
           paint.color = done
-              ? pixelArt.colorPalette[colored![y][x]]
+              ? pixelArt.colorPalette[colored[y][x]]
               : Colors.grey[300]!;
           canvas.drawRect(
             Rect.fromLTWH(

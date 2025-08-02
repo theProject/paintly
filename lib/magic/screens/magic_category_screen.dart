@@ -4,10 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import '../../providers/settings_provider.dart';
-import 'magic_mode_screen.dart';
-import '../../magic/';
+import '../../magic/screens/magic_mode_screen.dart';
+import '../../magic/screens/magic_coloring_screen.dart';
+import '../../models/magic_object.dart';
+import '../../magic/data/magic_categories.dart'
 
 class MagicCategoryScreen extends StatefulWidget {
   final MagicCategory category;
@@ -201,10 +202,10 @@ class _MagicCategoryScreenState extends State<MagicCategoryScreen> {
               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withAlpha((0.05 * 255).toInt()),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withAlpha((0.1 * 255).toInt()),
                     width: 0.5,
                   ),
                 ),
@@ -224,12 +225,12 @@ class _MagicCategoryScreenState extends State<MagicCategoryScreen> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: isCompleted 
-                                      ? widget.category.color.withValues(alpha: 0.1)
+                                      ? widget.category.color.withAlpha((0.1 * 255).toInt())
                                       : Colors.grey[100],
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
                                     color: isCompleted 
-                                        ? widget.category.color.withValues(alpha: 0.3)
+                                        ? widget.category.color.withAlpha((0.3 * 255).toInt())
                                         : Colors.grey[300]!,
                                     width: 1,
                                   ),
@@ -256,7 +257,7 @@ class _MagicCategoryScreenState extends State<MagicCategoryScreen> {
                                                       vertical: 4,
                                                     ),
                                                     decoration: BoxDecoration(
-                                                      color: Colors.green.withValues(alpha: 0.2),
+                                                      color: Colors.green.withAlpha((0.2 * 255).toInt()),
                                                       borderRadius: BorderRadius.circular(12),
                                                     ),
                                                     child: const Text(
@@ -339,7 +340,7 @@ class _MagicCategoryScreenState extends State<MagicCategoryScreen> {
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: widget.category.color.withValues(alpha: 0.3),
+                                      color: widget.category.color.withAlpha((0.3 * 255).toInt()),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -375,22 +376,6 @@ class _MagicCategoryScreenState extends State<MagicCategoryScreen> {
     return prefs.getString('magic_svg_${widget.category.id}_$objectId');
   }
 }
-
 // Data model for magic objects
-class MagicObject {
-  final String id;
-  final String name;
-  final String svgPath;
-  final String previewIcon;
-  final Map<String, Color> predefinedColors;
-  final Map<String, List<Color>> customizableRegions;
-
-  MagicObject({
-    required this.id,
-    required this.name,
-    required this.svgPath,
-    required this.previewIcon,
-    this.predefinedColors = const {},
-    this.customizableRegions = const {},
-  });
+// (Removed local MagicObject class; now using the one from models/magic_object.dart)
 }

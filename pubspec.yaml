@@ -1,6 +1,6 @@
-name: tasaiyume
-description: TasaiYume - Colorful dreams of  Aeris and Winnie
-version: 1.0.0+1
+name: painted
+description: coloring game with magic and adventure
+version: 1.0.0+3
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -58,6 +58,7 @@ dev_dependencies:
   build_runner: ^2.4.8
   json_serializable: ^6.7.1
 
+  painted: any
 flutter:
   uses-material-design: true
   
