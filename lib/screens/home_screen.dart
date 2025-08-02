@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback? onTabChanged;
 
   const HomeScreen({
-    super.key, 
+    super.key,
     this.selectedTab,
     this.onTabChanged,
   });
@@ -51,36 +51,38 @@ class _HomeScreenState extends State<HomeScreen> {
         try {
           final String jsonString = await rootBundle.loadString(jsonFile);
           final Map<String, dynamic> jsonData = json.decode(jsonString);
-          final PixelArt pixelArt = PixelArt.fromJson(jsonData);
-          loadedPages.add(pixelArt);
+          // Now using your actual PixelArt.fromJson constructor
+          final List<dynamic> arts = jsonData['pixel_arts'];
+          for (var artJson in arts) {
+            final PixelArt pixelArt = PixelArt.fromJson(artJson);
+            loadedPages.add(pixelArt);
+          }
         } catch (e) {
-          debugPrint('Error loading $jsonFile: $e');
+          debugPrint('Error loading or parsing $jsonFile: $e');
         }
       }
 
-      setState(() {
-        coloringPages = loadedPages;
-      });
+      if (mounted) {
+        setState(() {
+          coloringPages = loadedPages;
+        });
+      }
     } catch (e) {
-      debugPrint('Error loading coloring pages: $e');
+      debugPrint('Error loading coloring pages manifest: $e');
     }
   }
 
-  // Filter pages based on selected tab
   List<PixelArt> get filteredPages {
     if (widget.selectedTab == null || widget.selectedTab == 0) {
-      return coloringPages; // All
+      return coloringPages;
     }
-    
-    // You'll need to add a category property to your PixelArt model
-    // For now, returning all pages
     return coloringPages;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, // Transparent to show background
+      backgroundColor: Colors.transparent,
       body: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -116,14 +118,14 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Reduced from 10
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05), // Reduced from 0.15 to 5%
+              color: Colors.white.withOpacity(0.05),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1), // Reduced from 0.2
-                width: 0.5, // Thinner border
+                color: Colors.white.withOpacity(0.1),
+                width: 0.5,
               ),
               boxShadow: [
                 BoxShadow(
@@ -131,18 +133,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     colorScheme.primary,
                     colorScheme.secondary,
                     colorScheme.secondaryContainer,
-                    Color(0xFF9DDAC8),
-                    Color(0xFF8B96A9),
-                  ][index % 5].withOpacity(0.1),
+                    const Color(0xFF9DDAC8),
+                    const Color(0xFF8B96A9),
+                  ][index % 5]
+                      .withOpacity(0.1),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
               ],
             ),
             child: Container(
-              margin: const EdgeInsets.all(2), // Small margin to see glass edge
+              margin: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.white, // Inner white container
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(22),
               ),
               child: Padding(
@@ -150,17 +153,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.grid_on_rounded,
-                            size: 48,
-                            color: Colors.grey[400],
-                          ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            // **FIXED**: Use width and height from your model
+                            final double cellWidth = constraints.maxWidth / pixelArt.width;
+                            final double cellHeight = constraints.maxHeight / pixelArt.height;
+                            final double cellSize = cellWidth < cellHeight ? cellWidth : cellHeight;
+
+                            return CustomPaint(
+                              painter: PixelArtPreviewPainter(
+                                pixelArt: pixelArt,
+                                cellSize: cellSize,
+                              ),
+                              size: Size.infinite,
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -185,7 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Custom painter to render pixel art preview with progress
 class PixelArtPreviewPainter extends CustomPainter {
   final PixelArt pixelArt;
   final double cellSize;
@@ -199,68 +207,50 @@ class PixelArtPreviewPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.fill;
+    final paint = Paint()..style = PaintingStyle.fill;
+    
+    final bool hasProgress = progress != null && progress!['coloredPixels'] != null;
+    final List<List<int>> pixelData = hasProgress
+        ? (progress!['coloredPixels'] as List)
+            .map((row) => List<int>.from(row))
+            .toList()
+        : pixelArt.pixels;
 
-    // Get color data from progress or use defaults
-    final List<List<int>>? coloredPixels = progress?['coloredPixels'];
+    final List<Color> colors = pixelArt.colorPalette;
 
-    // Draw background grid
-    paint.color = Colors.grey[100]!;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    // Center the artwork
+    final totalArtWidth = pixelArt.width * cellSize;
+    final totalArtHeight = pixelArt.height * cellSize;
+    final offsetX = (size.width - totalArtWidth) / 2;
+    final offsetY = (size.height - totalArtHeight) / 2;
 
-    // Draw colored pixels
-    for (int y = 0; y < pixelArt.gridSize; y++) {
-      for (int x = 0; x < pixelArt.gridSize; x++) {
-        final colorIndex = pixelArt.pixels[y][x];
-        if (colorIndex > 0) {
-          // Check if this pixel has been colored
-          final isColored = coloredPixels != null && 
-                           coloredPixels[y][x] > 0;
-          
-          if (isColored) {
-            // Use the actual color from progress
-            paint.color = pixelArt.colorPalette[coloredPixels[y][x]];
-          } else {
-            // Show as outline/grey for uncolored
-            paint.color = Colors.grey[300]!;
-          }
-          
-          canvas.drawRect(
-            Rect.fromLTWH(
-              x * cellSize,
-              y * cellSize,
-              cellSize - 0.5, // Small gap for grid effect
-              cellSize - 0.5,
-            ),
-            paint,
-          );
+    canvas.translate(offsetX, offsetY);
+
+    // Draw the pixel art
+    for (int y = 0; y < pixelArt.height; y++) {
+      for (int x = 0; x < pixelArt.width; x++) {
+        final int colorIndex = pixelData[y][x];
+
+        if (colorIndex > 0 && colorIndex < colors.length) {
+          paint.color = colors[colorIndex];
+        } else {
+          paint.color = Colors.grey[200]!;
         }
+        
+        canvas.drawRect(
+          Rect.fromLTWH(
+            x * cellSize,
+            y * cellSize,
+            cellSize,
+            cellSize,
+          ),
+          paint,
+        );
       }
-    }
-    
-    // Draw subtle grid lines
-    paint.color = Colors.grey.withOpacity(0.1);
-    paint.style = PaintingStyle.stroke;
-    paint.strokeWidth = 0.5;
-    
-    for (int i = 0; i <= pixelArt.gridSize; i++) {
-      // Vertical lines
-      canvas.drawLine(
-        Offset(i * cellSize, 0),
-        Offset(i * cellSize, size.height),
-        paint,
-      );
-      // Horizontal lines
-      canvas.drawLine(
-        Offset(0, i * cellSize),
-        Offset(size.width, i * cellSize),
-        paint,
-      );
     }
   }
 
   @override
-  bool shouldRepaint(covariant PixelArtPreviewPainter oldDelegate) => 
-      oldDelegate.progress != progress;
+  bool shouldRepaint(covariant PixelArtPreviewPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.pixelArt != pixelArt;
 }

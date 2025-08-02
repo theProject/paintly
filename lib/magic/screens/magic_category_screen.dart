@@ -1,14 +1,10 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:confetti/confetti.dart';
 import '../../providers/settings_provider.dart';
-import '../../magic/screens/magic_mode_screen.dart';
-import '../../magic/screens/magic_coloring_screen.dart';
-import '../../models/magic_object.dart';
-import '../../magic/data/magic_categories.dart'
+import '../../magic/screens/magic_category_screen.dart';
+import 'dart:math' as math;
 
 class MagicCategoryScreen extends StatefulWidget {
   final MagicCategory category;
@@ -22,151 +18,85 @@ class MagicCategoryScreen extends StatefulWidget {
   State<MagicCategoryScreen> createState() => _MagicCategoryScreenState();
 }
 
-class _MagicCategoryScreenState extends State<MagicCategoryScreen> {
-  late List<MagicObject> objects;
-
+class _MagicCategoryScreenState extends State<MagicCategoryScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _sparkleController;
+  late AnimationController _floatController;
+  late ConfettiController _confettiController;
+  
   @override
   void initState() {
     super.initState();
-    _loadCategoryObjects();
+    _sparkleController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+    
+    _floatController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat(reverse: true);
+    
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
+    
+    // Play category entrance sound
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SettingsProvider>().playSound('category_open.mp3');
+    });
   }
 
-  void _loadCategoryObjects() {
-    // Define objects for each category
-    switch (widget.category.id) {
-      case 'farm':
-        objects = [
-          MagicObject(
-            id: 'chicken',
-            name: 'Chicken',
-            svgPath: 'assets/svg/magic/farm/chicken.svg',
-            previewIcon: '🐔',
-            predefinedColors: {
-              'body': const Color(0xFFFFE5B4),
-              'beak': const Color(0xFFFFA500),
-              'legs': const Color(0xFFFF8C00),
-              'eye': const Color(0xFF000000),
-              'comb': const Color(0xFFDC143C),
-            },
-            customizableRegions: {
-              'feathers': [
-                const Color(0xFFFFE5B4),
-                const Color(0xFFF5DEB3),
-                const Color(0xFFFFDAB9),
-                const Color(0xFFFFE4E1),
-                const Color(0xFFFFF0F5),
-              ],
-              'tail': [
-                const Color(0xFF8B4513),
-                const Color(0xFFA0522D),
-                const Color(0xFFCD853F),
-              ],
-            },
-          ),
-          MagicObject(
-            id: 'cow',
-            name: 'Cow',
-            svgPath: 'assets/svg/magic/farm/cow.svg',
-            previewIcon: '🐄',
-            predefinedColors: {
-              'body': const Color(0xFFF5F5DC),
-              'spots': const Color(0xFF000000),
-              'nose': const Color(0xFFFFB6C1),
-              'hooves': const Color(0xFF2F4F4F),
-            },
-            customizableRegions: {
-              'body_main': [
-                const Color(0xFFF5F5DC),
-                const Color(0xFF8B4513),
-                const Color(0xFFD2691E),
-                const Color(0xFF000000),
-              ],
-            },
-          ),
-          MagicObject(
-            id: 'pig',
-            name: 'Pig',
-            svgPath: 'assets/svg/magic/farm/pig.svg',
-            previewIcon: '🐷',
-          ),
-          MagicObject(
-            id: 'farmer',
-            name: 'Farmer',
-            svgPath: 'assets/svg/magic/farm/farmer.svg',
-            previewIcon: '👨‍🌾',
-          ),
-        ];
-        break;
-      default:
-        objects = [];
-    }
+  @override
+  void dispose() {
+    _sparkleController.dispose();
+    _floatController.dispose();
+    _confettiController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: widget.category.backgroundColor,
+      body: Stack(
         children: [
-          // Header with back button
+          // Animated background pattern
+          _buildAnimatedBackground(),
+          
+          // Main content
           SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.all(12),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.category.name,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: widget.category.color,
-                              ),
-                        ),
-                        Text(
-                          'Choose what to color!',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            child: Column(
+              children: [
+                // Header
+                _buildHeader(),
+                
+                // Activities grid
+                Expanded(
+                  child: _buildActivitiesGrid(),
+                ),
+              ],
             ),
           ),
-
-          // Objects Grid
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 0.85,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: objects.length,
-              itemBuilder: (context, index) {
-                return FadeInUp(
-                  delay: Duration(milliseconds: index * 100),
-                  child: _buildObjectCard(objects[index]),
-                );
-              },
+          
+          // Floating magical elements
+          ..._buildFloatingElements(),
+          
+          // Confetti
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              colors: [
+                widget.category.primaryColor,
+                widget.category.secondaryColor,
+                Colors.yellow,
+                Colors.pink,
+                Colors.purple,
+              ],
+              numberOfParticles: 30,
             ),
           ),
         ],
@@ -174,208 +104,398 @@ class _MagicCategoryScreenState extends State<MagicCategoryScreen> {
     );
   }
 
-  Widget _buildObjectCard(MagicObject object) {
-    return FutureBuilder<bool>(
-      future: _isObjectCompleted(object.id),
-      builder: (context, snapshot) {
-        final isCompleted = snapshot.data ?? false;
-        
-        return GestureDetector(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
-            
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MagicColoringScreen(
-                  object: object,
-                  category: widget.category,
-                  isCustomizing: isCompleted,
-                ),
-              ),
-            ).then((_) => setState(() {})); // Refresh on return
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha((0.05 * 255).toInt()),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: Colors.white.withAlpha((0.1 * 255).toInt()),
-                    width: 0.5,
-                  ),
-                ),
-                child: Container(
-                  margin: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: isCompleted 
-                                      ? widget.category.color.withAlpha((0.1 * 255).toInt())
-                                      : Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: isCompleted 
-                                        ? widget.category.color.withAlpha((0.3 * 255).toInt())
-                                        : Colors.grey[300]!,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: isCompleted
-                                      ? FutureBuilder<String?>(
-                                          future: _loadColoredSvg(object.id),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              // In a real app, render the colored SVG
-                                              // For now, show a colored version
-                                              return Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    object.previewIcon,
-                                                    style: const TextStyle(fontSize: 48),
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Container(
-                                                    padding: const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 4,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.green.withAlpha((0.2 * 255).toInt()),
-                                                      borderRadius: BorderRadius.circular(12),
-                                                    ),
-                                                    child: const Text(
-                                                      'Completed!',
-                                                      style: TextStyle(
-                                                        color: Colors.green,
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            }
-                                            return Text(
-                                              object.previewIcon,
-                                              style: const TextStyle(fontSize: 48),
-                                            );
-                                          },
-                                        )
-                                      : Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.brush_rounded,
-                                              size: 32,
-                                              color: Colors.grey[400],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Tap to color',
-                                              style: TextStyle(
-                                                color: Colors.grey[600],
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              object.name,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      // Customize button for completed objects
-                      if (isCompleted)
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MagicColoringScreen(
-                                      object: object,
-                                      category: widget.category,
-                                      isCustomizing: true,
-                                    ),
-                                  ),
-                                ).then((_) => setState(() {}));
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: widget.category.color,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: widget.category.color.withAlpha((0.3 * 255).toInt()),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.edit_rounded,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+  Widget _buildAnimatedBackground() {
+    return AnimatedBuilder(
+      animation: _sparkleController,
+      builder: (context, child) {
+        return CustomPaint(
+          size: MediaQuery.of(context).size,
+          painter: MagicalBackgroundPainter(
+            animationValue: _sparkleController.value,
+            primaryColor: widget.category.primaryColor,
+            secondaryColor: widget.category.secondaryColor,
           ),
         );
       },
     );
   }
 
-  Future<bool> _isObjectCompleted(String objectId) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('magic_completed_${widget.category.id}_$objectId') ?? false;
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          // Back button
+          BounceIn(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.9),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.category.primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                color: widget.category.primaryColor,
+                onPressed: () {
+                  context.read<SettingsProvider>().playSound('tap.mp3');
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          
+          // Title
+          Expanded(
+            child: FadeInRight(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.category.name,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(2, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    widget.category.description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withValues(alpha: 0.9),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Category icon
+          ElasticIn(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                widget.category.icon,
+                size: 32,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  Future<String?> _loadColoredSvg(String objectId) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('magic_svg_${widget.category.id}_$objectId');
+  Widget _buildActivitiesGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(20),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200,
+        childAspectRatio: 0.8,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: widget.category.activities.length,
+      itemBuilder: (context, index) {
+        final activity = widget.category.activities[index];
+        return FadeInUp(
+          delay: Duration(milliseconds: index * 100),
+          child: _buildActivityCard(activity, index),
+        );
+      },
+    );
+  }
+
+  Widget _buildActivityCard(MagicActivity activity, int index) {
+    return GestureDetector(
+      onTap: () {
+        context.read<SettingsProvider>().playSound('magic_select.mp3');
+        _confettiController.play();
+        
+        // Navigate to activity
+        _navigateToActivity(activity);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.white.withValues(alpha: 0.9),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: widget.category.primaryColor.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Magical sparkle overlay
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: AnimatedBuilder(
+                  animation: _sparkleController,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: SparkleOverlayPainter(
+                        animationValue: _sparkleController.value,
+                        color: widget.category.primaryColor.withValues(alpha: 0.1),
+                        delay: index * 0.1,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Activity icon with animation
+                  AnimatedBuilder(
+                    animation: _floatController,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(0, math.sin(_floatController.value * 2 * math.pi) * 5),
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                widget.category.primaryColor,
+                                widget.category.secondaryColor,
+                              ],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: widget.category.primaryColor.withValues(alpha: 0.4),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            activity.icon,
+                            size: 36,
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Activity name
+                  Text(
+                    activity.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: widget.category.primaryColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  // Difficulty indicator
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      3,
+                      (i) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Icon(
+                          Icons.star_rounded,
+                          size: 16,
+                          color: i < activity.difficulty
+                              ? Colors.amber
+                              : Colors.grey[300],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Lock overlay if locked
+            if (activity.isLocked)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.lock_rounded,
+                      size: 48,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildFloatingElements() {
+    return List.generate(5, (index) {
+      return AnimatedBuilder(
+        animation: _floatController,
+        builder: (context, child) {
+          final offset = _floatController.value + (index * 0.2);
+          return Positioned(
+            left: 50 + (index * 60.0) % 300,
+            top: 100 + math.sin(offset * 2 * math.pi) * 30,
+            child: Transform.rotate(
+              angle: offset * 2 * math.pi,
+              child: Opacity(
+                opacity: 0.6,
+                child: Icon(
+                  [
+                    Icons.star,
+                    Icons.favorite,
+                    Icons.circle,
+                    Icons.hexagon,
+                    Icons.auto_awesome,
+                  ][index % 5],
+                  color: [
+                    Colors.yellow,
+                    Colors.pink,
+                    widget.category.primaryColor,
+                    widget.category.secondaryColor,
+                    Colors.purple,
+                  ][index % 5],
+                  size: 20 + (index * 5.0),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  void _navigateToActivity(MagicActivity activity) {
+    if (activity.isLocked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Complete more activities to unlock ${activity.name}!'),
+          backgroundColor: widget.category.primaryColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Navigate based on activity type
+    // You can add navigation to specific activity screens here
+    debugPrint('Navigate to ${activity.name}');
   }
 }
-// Data model for magic objects
-// (Removed local MagicObject class; now using the one from models/magic_object.dart)
+
+class MagicalBackgroundPainter extends CustomPainter {
+  final double animationValue;
+  final Color primaryColor;
+  final Color secondaryColor;
+
+  MagicalBackgroundPainter({
+    required this.animationValue,
+    required this.primaryColor,
+    required this.secondaryColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..shader = RadialGradient(
+        center: Alignment(
+          math.cos(animationValue * 2 * math.pi) * 0.5,
+          math.sin(animationValue * 2 * math.pi) * 0.5,
+        ),
+        radius: 1.5,
+        colors: [
+          primaryColor.withValues(alpha: 0.3),
+          secondaryColor.withValues(alpha: 0.2),
+          primaryColor.withValues(alpha: 0.1),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+  }
+
+  @override
+  bool shouldRepaint(MagicalBackgroundPainter oldDelegate) {
+    return oldDelegate.animationValue != animationValue;
+  }
+}
+
+class SparkleOverlayPainter extends CustomPainter {
+  final double animationValue;
+  final Color color;
+  final double delay;
+
+  SparkleOverlayPainter({
+    required this.animationValue,
+    required this.color,
+    required this.delay,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final adjustedValue = (animationValue + delay) % 1.0;
+    final sparkleRadius = size.width * 0.1 * adjustedValue;
+    
+    final paint = Paint()
+      ..color = color.withValues(alpha: (1 - adjustedValue) * 0.3)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(
+      Offset(size.width * 0.8, size.height * 0.2),
+      sparkleRadius,
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(SparkleOverlayPainter oldDelegate) {
+    return oldDelegate.animationValue != animationValue;
+  }
 }
