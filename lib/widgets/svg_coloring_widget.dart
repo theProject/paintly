@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Added for rootBundle
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:xml/xml.dart' as xml;
-import '../providers/scene_provider.dart'; // Added for MagicSceneObject
-import '../magic/models/magic_models.dart'; // Added for MagicSceneObject
+// currently not used?  import '../providers/scene_provider.dart'; 
+import '../magic/models/magic_models.dart'; 
 
 // Replace the placeholder CustomPaint in magic_coloring_screen.dart with this widget:
 

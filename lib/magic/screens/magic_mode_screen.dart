@@ -1,3 +1,5 @@
+// lib/magic/screens/magic_mode_screen.dart
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,7 +7,11 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import '../../providers/settings_provider.dart';
 import 'magic_category_screen.dart';
-import '../data/magic_categories.dart';  // Import the shared MagicCategory
+
+// alias your data-only class so its MagicCategory (with a single .color) doesn't clash
+import '../data/magic_categories.dart' as data;
+// import the UI model types you actually want everywhere else
+import '../models/magic_models.dart' show MagicCategory, MagicActivity;
 
 class MagicModeScreen extends StatefulWidget {
   const MagicModeScreen({super.key});
@@ -15,8 +21,21 @@ class MagicModeScreen extends StatefulWidget {
 }
 
 class _MagicModeScreenState extends State<MagicModeScreen> {
-  // Use categories from MagicCategories class
-  final List<MagicCategory> categories = MagicCategories.getAllCategories();
+  // Grab the raw list and convert into your model MagicCategory
+  final List<MagicCategory> categories = data.MagicCategories
+      .getAllCategories()
+      .map((d) => MagicCategory(
+            id: d.id,
+            name: d.name,
+            description: d.description,
+            icon: d.icon,
+            // migrate .withOpacity to .withValues(alpha: …)
+            primaryColor: d.color,
+            secondaryColor: d.color.withValues(alpha: 0.6),
+            backgroundColor: d.color.withValues(alpha: 0.1),
+            activities: <MagicActivity>[],
+          ))
+      .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +61,10 @@ class _MagicModeScreenState extends State<MagicModeScreen> {
                       const SizedBox(width: 12),
                       Text(
                         'Magic Mode',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.secondary,
                             ),
@@ -52,15 +74,16 @@ class _MagicModeScreenState extends State<MagicModeScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Choose a magical world to color!',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey[600],
-                        ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(color: Colors.grey[600]),
                   ),
                 ],
               ),
             ),
           ),
-          
+
           // Category Grid
           Expanded(
             child: GridView.builder(
@@ -89,8 +112,8 @@ class _MagicModeScreenState extends State<MagicModeScreen> {
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
-        
+        context.read<SettingsProvider>().playSound('bubbletap.wav');
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -108,20 +131,20 @@ class _MagicModeScreenState extends State<MagicModeScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  category.color.withValues(alpha: 0.1),
-                  category.color.withValues(alpha: 0.05),
+                  category.primaryColor.withValues(alpha: 0.1),
+                  category.primaryColor.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: category.color.withValues(alpha: 0.2),
+                color: category.primaryColor.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
             child: Container(
               margin: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: category.backgroundColor,
                 borderRadius: BorderRadius.circular(22),
               ),
               child: Material(
@@ -130,12 +153,13 @@ class _MagicModeScreenState extends State<MagicModeScreen> {
                   borderRadius: BorderRadius.circular(22),
                   onTap: () {
                     HapticFeedback.lightImpact();
-                    context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
-                    
+                    context.read<SettingsProvider>().playSound('bubbletap.wav');
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MagicCategoryScreen(category: category),
+                        builder: (context) =>
+                            MagicCategoryScreen(category: category),
                       ),
                     );
                   },
@@ -148,29 +172,33 @@ class _MagicModeScreenState extends State<MagicModeScreen> {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: category.color.withValues(alpha: 0.1),
+                            color: category.primaryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Icon(
                             category.icon,
                             size: 48,
-                            color: category.color,
+                            color: category.primaryColor,
                           ),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           category.name,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: category.color,
+                                color: category.primaryColor,
                               ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           category.description,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
                           textAlign: TextAlign.center,
                         ),
                       ],
