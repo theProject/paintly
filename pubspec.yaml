@@ -1,6 +1,6 @@
 name: painted
 description: coloring game with magic and adventure
-version: 1.0.0+3
+version: 1.0.0+4
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -8,62 +8,52 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   # State Management
   provider: ^6.1.1
-  
+
   # Storage
   shared_preferences: ^2.2.2
-  
+
   # Image Handling
   image_picker: ^1.0.7
   image: ^4.1.7
   path_provider: ^2.1.2
-  
+
   # Permissions
-  permission_handler: ^11.2.0
-  
-  # UI/UX
+  permission_handler: ^12.0.1
+
+  # UI / Animation / Effects
   google_fonts: ^6.1.0
   flutter_svg: ^2.0.9
-  animate_do: ^3.1.2
-  confetti: ^0.7.0
-  lottie: ^3.0.0  # Updated to latest version
-  
+  animate_do: ^4.2.0
+  flutter_animate: ^4.5.0
+  confetti: ^0.8.0
+  rive: ^0.12.3
+
   # Audio
-  audioplayers: ^5.2.1
-  
-  # XML/SVG Processing
-  xml: ^6.5.0
+  audioplayers: ^6.5.0
+
+  # Parsing / Math / Utils
+  xml: ^6.6.0
   path_drawing: ^1.0.1
-  
-  # Missing Dependencies that are causing errors:
-  cupertino_icons: ^1.0.6  # For iOS-style icons
-  http: ^1.2.0  # For web requests (if using web_search)
-  flutter_animate: ^4.5.0  # For additional animations
-  collection: ^1.18.0  # For advanced collections
-  
-  # If you're using Scene Mode features:
-  vector_math: ^2.1.4  # For transformations
-  
-  # If using JSON serialization:
+  vector_math: ^2.2.0
+  collection: ^1.18.0
+  http: ^1.2.0
+  cupertino_icons: ^1.0.6
   json_annotation: ^4.8.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.1
-  
-  # If using JSON serialization:
+  flutter_lints: ^6.0.0
   build_runner: ^2.4.8
   json_serializable: ^6.7.1
 
 flutter:
   uses-material-design: true
-  
+
   assets:
     - assets/images/
-    - assets/images/previews/  # Added for preview images
+    - assets/images/previews/
     - assets/data/
     - assets/audio/
     - assets/scenes/
@@ -76,12 +66,11 @@ flutter:
     - assets/svg/magic/ocean/
     - assets/svg/magic/city/
     - assets/svg/magic/forest/
-    - assets/animations/  # Added for Lottie animations
-  
-  # If you have custom fonts:
-  # fonts:
-  #   - family: YourCustomFont
-  #     fonts:
-  #       - asset: assets/fonts/YourFont-Regular.ttf
-  #       - asset: assets/fonts/YourFont-Bold.ttf
-  #         weight: 700
+    - assets/animations/  # Can now include .riv files here if needed
+
+# fonts:
+#   - family: YourCustomFont
+#     fonts:
+#       - asset: assets/fonts/YourFont-Regular.ttf
+#       - asset: assets/fonts/YourFont-Bold.ttf
+#         weight: 700
