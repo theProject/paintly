@@ -63,7 +63,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
   void _handleAddPixel() {
     // Navigate to ImportImageScreen
     HapticFeedback.lightImpact();
-    context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
+    context.read<SettingsProvider>().playSound('assets/audio/bubbletap.wav');
     Navigator.push(
       context,
       MaterialPageRoute(

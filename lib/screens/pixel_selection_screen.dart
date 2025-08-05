@@ -30,17 +30,26 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
   Future<void> loadColoringPages() async {
     try {
       List<PixelArt> loadedPages = [];
+
+      // Load only the pixel arts that belong to this category
       for (String artName in widget.category.pixelArts) {
         try {
-          final String jsonString =
-              await rootBundle.loadString('assets/data/$artName.json');
-          final Map<String, dynamic> jsonData = json.decode(jsonString);
-          final PixelArt pixelArt = PixelArt.fromJson(jsonData);
-          loadedPages.add(pixelArt);
+          final String jsonString = await rootBundle.loadString('assets/data/$artName.json');
+          debugPrint('Loading $artName.json: $jsonString'); // Debug line
+          final dynamic jsonData = json.decode(jsonString);
+          
+          // Ensure jsonData is a Map
+          if (jsonData is Map<String, dynamic>) {
+            final PixelArt pixelArt = PixelArt.fromJson(jsonData);
+            loadedPages.add(pixelArt);
+          } else {
+            debugPrint('Error: $artName.json is not a valid JSON object');
+          }
         } catch (e) {
           debugPrint('Error loading $artName.json: $e');
         }
       }
+
       setState(() {
         coloringPages = loadedPages;
         isLoading = false;
@@ -66,8 +75,7 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
         ),
         title: Row(
           children: [
-            Icon(widget.category.icon,
-                color: widget.category.color, size: 28),
+            Icon(widget.category.icon, color: widget.category.color, size: 28),
             const SizedBox(width: 8),
             Text(
               widget.category.name,
@@ -83,8 +91,7 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
           ? const Center(child: CircularProgressIndicator())
           : GridView.builder(
               padding: const EdgeInsets.all(16),
-              gridDelegate:
-                  const SliverGridDelegateWithMaxCrossAxisExtent(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200,
                 childAspectRatio: 0.85,
                 crossAxisSpacing: 16,
@@ -102,10 +109,6 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
   }
 
   Widget _buildPixelArtCard(PixelArt pixelArt) {
-    // Pre-calculate alpha values to replace withOpacity()
-    final borderAlpha = (0.2 * 255).round();
-    final shadowAlpha = (0.1 * 255).round();
-
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -122,12 +125,14 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: widget.category.color.withAlpha(borderAlpha),
+            // UPDATED: Replaced deprecated .withOpacity()
+            color: widget.category.color.withAlpha(51), // 0.2 opacity
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: widget.category.color.withAlpha(shadowAlpha),
+              // UPDATED: Replaced deprecated .withOpacity()
+              color: widget.category.color.withAlpha(26), // 0.1 opacity
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -149,10 +154,9 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
               const SizedBox(height: 12),
               Text(
                 pixelArt.name,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -176,7 +180,7 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
       builder: (context, constraints) {
         final cellSize = constraints.maxWidth / pixelArt.width;
         final displayHeight = cellSize * pixelArt.height;
-
+        
         if (displayHeight > constraints.maxHeight) {
           final scale = constraints.maxHeight / displayHeight;
           return Transform.scale(
@@ -184,7 +188,7 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
             child: _buildPixelGrid(pixelArt, cellSize),
           );
         }
-
+        
         return Center(
           child: _buildPixelGrid(pixelArt, cellSize),
         );
@@ -201,13 +205,13 @@ class _PixelSelectionScreenState extends State<PixelSelectionScreen> {
           children: List.generate(pixelArt.width, (col) {
             final pixelNumber = pixelArt.pixels[row][col];
             if (pixelNumber == 0) {
-              // Use SizedBox for empty space instead of Container
+              // UPDATED: Used SizedBox for whitespace instead of Container
               return SizedBox(
                 width: cellSize,
                 height: cellSize,
               );
             }
-
+            
             return Container(
               width: cellSize,
               height: cellSize,

@@ -1,11 +1,11 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:ui'; // for ImageFilter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
+import 'package:provider/provider.dart'; // <-- Add this import
 import '../models/pixel_art.dart';
+import '../providers/coloring_provider.dart'; // <-- Add this import
 import 'coloring_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<PixelArt> coloringPages = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -32,43 +33,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> loadColoringPages() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
-      final List<String> jsonFiles = [
-        'assets/data/heart.json',
-        'assets/data/cat.json',
-        'assets/data/flower.json',
-        'assets/data/house.json',
-        'assets/data/star.json',
-        'assets/data/butterfly.json',
-        'assets/data/tree.json',
-        'assets/data/rainbow.json',
-        'assets/data/smiley.json',
-      ];
-
-      List<PixelArt> loadedPages = [];
-
-      for (String jsonFile in jsonFiles) {
-        try {
-          final String jsonString = await rootBundle.loadString(jsonFile);
-          final Map<String, dynamic> jsonData = json.decode(jsonString);
-          // Now using your actual PixelArt.fromJson constructor
-          final List<dynamic> arts = jsonData['pixel_arts'];
-          for (var artJson in arts) {
-            final PixelArt pixelArt = PixelArt.fromJson(artJson);
-            loadedPages.add(pixelArt);
-          }
-        } catch (e) {
-          debugPrint('Error loading or parsing $jsonFile: $e');
-        }
-      }
+      final String jsonString =
+          await rootBundle.loadString('assets/data/pixel_art.json');
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<PixelArt> loadedPages =
+          jsonList.map((json) => PixelArt.fromJson(json)).toList();
 
       if (mounted) {
         setState(() {
           coloringPages = loadedPages;
+          isLoading = false;
         });
       }
     } catch (e) {
-      debugPrint('Error loading coloring pages manifest: $e');
+      debugPrint('Error loading or parsing pixel_art.json: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -83,22 +70,24 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 0.85,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
-        itemCount: filteredPages.length,
-        itemBuilder: (context, index) {
-          return FadeInUp(
-            delay: Duration(milliseconds: index * 50),
-            child: _buildColoringPageTile(filteredPages[index], index),
-          );
-        },
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                childAspectRatio: 0.85,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: filteredPages.length,
+              itemBuilder: (context, index) {
+                return FadeInUp(
+                  delay: Duration(milliseconds: index * 50),
+                  child: _buildColoringPageTile(filteredPages[index], index),
+                );
+              },
+            ),
     );
   }
 
@@ -111,7 +100,12 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ColoringScreen(pixelArt: pixelArt),
+            // ================== THIS IS THE FIX ==================
+            builder: (context) => ChangeNotifierProvider(
+              create: (_) => ColoringProvider(), // Creates a new provider for this screen
+              child: ColoringScreen(pixelArt: pixelArt),
+            ),
+            // =====================================================
           ),
         );
       },
@@ -121,10 +115,10 @@ class _HomeScreenState extends State<HomeScreen> {
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withAlpha(13), // 0.05 opacity
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withAlpha(26), // 0.1 opacity
                 width: 0.5,
               ),
               boxShadow: [
@@ -136,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Color(0xFF9DDAC8),
                     const Color(0xFF8B96A9),
                   ][index % 5]
-                      .withOpacity(0.1),
+                      .withAlpha(26), // 0.1 opacity
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
@@ -157,10 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(12),
                         child: LayoutBuilder(
                           builder: (context, constraints) {
-                            // **FIXED**: Use width and height from your model
-                            final double cellWidth = constraints.maxWidth / pixelArt.width;
-                            final double cellHeight = constraints.maxHeight / pixelArt.height;
-                            final double cellSize = cellWidth < cellHeight ? cellWidth : cellHeight;
+                            final double cellWidth =
+                                constraints.maxWidth / pixelArt.width;
+                            final double cellHeight =
+                                constraints.maxHeight / pixelArt.height;
+                            final double cellSize =
+                                cellWidth < cellHeight ? cellWidth : cellHeight;
 
                             return CustomPaint(
                               painter: PixelArtPreviewPainter(
@@ -208,8 +204,9 @@ class PixelArtPreviewPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
-    
-    final bool hasProgress = progress != null && progress!['coloredPixels'] != null;
+
+    final bool hasProgress =
+        progress != null && progress!['coloredPixels'] != null;
     final List<List<int>> pixelData = hasProgress
         ? (progress!['coloredPixels'] as List)
             .map((row) => List<int>.from(row))
@@ -218,7 +215,6 @@ class PixelArtPreviewPainter extends CustomPainter {
 
     final List<Color> colors = pixelArt.colorPalette;
 
-    // Center the artwork
     final totalArtWidth = pixelArt.width * cellSize;
     final totalArtHeight = pixelArt.height * cellSize;
     final offsetX = (size.width - totalArtWidth) / 2;
@@ -226,17 +222,16 @@ class PixelArtPreviewPainter extends CustomPainter {
 
     canvas.translate(offsetX, offsetY);
 
-    // Draw the pixel art
     for (int y = 0; y < pixelArt.height; y++) {
       for (int x = 0; x < pixelArt.width; x++) {
         final int colorIndex = pixelData[y][x];
 
-        if (colorIndex > 0 && colorIndex < colors.length) {
-          paint.color = colors[colorIndex];
+        if (colorIndex > 0 && colorIndex <= colors.length) {
+          paint.color = colors[colorIndex - 1];
         } else {
           paint.color = Colors.grey[200]!;
         }
-        
+
         canvas.drawRect(
           Rect.fromLTWH(
             x * cellSize,

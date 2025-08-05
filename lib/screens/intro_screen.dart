@@ -17,7 +17,7 @@ class _IntroScreenState extends State<IntroScreen> {
 
   final List<IntroPage> _pages = [
     IntroPage(
-      title: 'Welcome to Colorful Adventures!',
+      title: 'Tasai Yume!',
       description: 'A magical world of pixel art and creative coloring awaits you',
       icon: Icons.palette_rounded,
       color: const Color(0xFFE93A45), // Red
