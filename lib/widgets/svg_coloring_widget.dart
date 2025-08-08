@@ -9,7 +9,7 @@ import '../magic/models/magic_models.dart';
 
 class SvgColoringWidget extends StatefulWidget {
   final String svgPath;
-  final Map<String, Color> coloredRegions;
+  final Map<String, Color> coloredRegions; 
   final Map<String, String> regionNumbers;
   final Map<String, Color> predefinedColors;
   final bool isCustomizing;

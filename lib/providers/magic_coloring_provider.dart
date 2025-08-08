@@ -248,4 +248,4 @@ class CompletedMagicArt {
       completedAt: DateTime.parse(json['completedAt']),
     );
   }
-}
+} 

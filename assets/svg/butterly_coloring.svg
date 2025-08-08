@@ -1,0 +1,51 @@
+<!-- EXAMPLE 1: assets/svg/butterfly_coloring.svg -->
+<!-- Simple Butterfly Paint-by-Number SVG -->
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background (not numbered) -->
+  <rect width="400" height="400" fill="#F5F5F5"/>
+  
+  <!-- Region 1: Upper left wing (Purple) -->
+  <path id="wing_ul_1" 
+        d="M 120 140 Q 60 100, 80 180 Q 100 160, 120 140" 
+        fill="white" 
+        stroke="#333" 
+        stroke-width="2"/>
+  
+  <!-- Region 1: Upper right wing (Purple) -->
+  <path id="wing_ur_1" 
+        d="M 280 140 Q 340 100, 320 180 Q 300 160, 280 140" 
+        fill="white" 
+        stroke="#333" 
+        stroke-width="2"/>
+  
+  <!-- Region 2: Lower left wing (Pink) -->
+  <ellipse id="wing_ll_2" 
+           cx="130" cy="200" rx="40" ry="30" 
+           fill="white" 
+           stroke="#333" 
+           stroke-width="2"/>
+  
+  <!-- Region 2: Lower right wing (Pink) -->
+  <ellipse id="wing_lr_2" 
+           cx="270" cy="200" rx="40" ry="30" 
+           fill="white" 
+           stroke="#333" 
+           stroke-width="2"/>
+  
+  <!-- Region 3: Body (Brown) -->
+  <ellipse id="body_3" 
+           cx="200" cy="170" rx="15" ry="50" 
+           fill="white" 
+           stroke="#333" 
+           stroke-width="2"/>
+  
+  <!-- Region 4: Wing spots (Yellow) -->
+  <circle id="spot1_4" cx="100" cy="150" r="10" fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="spot2_4" cx="300" cy="150" r="10" fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="spot3_4" cx="130" cy="200" r="8" fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="spot4_4" cx="270" cy="200" r="8" fill="white" stroke="#333" stroke-width="2"/>
+  
+  <!-- Antennae (not numbered - decorative) -->
+  <line x1="195" y1="145" x2="180" y2="120" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  <line x1="205" y1="145" x2="220" y2="120" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="180" cy="120" r
