@@ -1,58 +1,57 @@
 <!-- ============================================= -->
 <!-- EXAMPLE 2: assets/svg/flower_garden.svg -->
-<!-- More Complex Flower Garden Paint-by-Number -->
 <!-- ============================================= -->
 <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
   <!-- Sky background -->
   <rect width="500" height="350" fill="#E8F4FF"/>
   
-  <!-- Region 1: Sun (Yellow) -->
+  <!-- Sun (Color 1 - Yellow) -->
   <circle id="sun_1" cx="400" cy="80" r="40" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 2: Sun rays (Orange) -->
+  <!-- Sun rays (Color 2 - Orange) -->
   <path id="ray1_2" d="M 400 30 L 395 10 L 405 10 Z" fill="white" stroke="#333" stroke-width="2"/>
   <path id="ray2_2" d="M 450 80 L 470 75 L 470 85 Z" fill="white" stroke="#333" stroke-width="2"/>
   <path id="ray3_2" d="M 400 130 L 395 150 L 405 150 Z" fill="white" stroke="#333" stroke-width="2"/>
   <path id="ray4_2" d="M 350 80 L 330 75 L 330 85 Z" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 3: Flower 1 petals (Red) -->
+  <!-- Flower 1 petals (Color 3 - Red) -->
   <circle id="f1_petal1_3" cx="100" cy="250" r="25" fill="white" stroke="#333" stroke-width="2"/>
   <circle id="f1_petal2_3" cx="150" cy="250" r="25" fill="white" stroke="#333" stroke-width="2"/>
   <circle id="f1_petal3_3" cx="125" cy="225" r="25" fill="white" stroke="#333" stroke-width="2"/>
   <circle id="f1_petal4_3" cx="125" cy="275" r="25" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 4: Flower 1 center (Yellow) -->
+  <!-- Flower 1 center (Color 4 - Yellow) -->
   <circle id="f1_center_4" cx="125" cy="250" r="20" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 5: Flower 2 petals (Purple) -->
+  <!-- Flower 2 petals (Color 5 - Purple) -->
   <ellipse id="f2_petal1_5" cx="250" cy="240" rx="15" ry="30" fill="white" stroke="#333" stroke-width="2"/>
   <ellipse id="f2_petal2_5" cx="250" cy="240" rx="30" ry="15" fill="white" stroke="#333" stroke-width="2"/>
   <ellipse id="f2_petal3_5" cx="250" cy="240" rx="15" ry="30" transform="rotate(45 250 240)" fill="white" stroke="#333" stroke-width="2"/>
   <ellipse id="f2_petal4_5" cx="250" cy="240" rx="15" ry="30" transform="rotate(-45 250 240)" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 6: Flower 2 center (Pink) -->
+  <!-- Flower 2 center (Color 6 - Pink) -->
   <circle id="f2_center_6" cx="250" cy="240" r="15" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 7: Flower 3 petals (Blue) -->
+  <!-- Flower 3 petals (Color 7 - Blue) -->
   <path id="f3_petals_7" d="M 350 260 Q 330 240, 350 220 Q 370 240, 350 260 M 350 260 Q 370 280, 390 260 Q 370 240, 350 260 M 350 260 Q 330 280, 310 260 Q 330 240, 350 260" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 8: Flower 3 center (White/Light) -->
+  <!-- Flower 3 center (Color 8 - White) -->
   <circle id="f3_center_8" cx="350" cy="260" r="12" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 9: All stems (Green) -->
+  <!-- All stems (Color 9 - Green) -->
   <rect id="stem1_9" x="120" y="290" width="10" height="80" fill="white" stroke="#333" stroke-width="2"/>
   <rect id="stem2_9" x="245" y="280" width="10" height="90" fill="white" stroke="#333" stroke-width="2"/>
   <rect id="stem3_9" x="345" y="285" width="10" height="85" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 10: Leaves (Dark Green) -->
+  <!-- Leaves (Color 10 - Dark Green) -->
   <ellipse id="leaf1_10" cx="140" cy="320" rx="20" ry="10" transform="rotate(-30 140 320)" fill="white" stroke="#333" stroke-width="2"/>
   <ellipse id="leaf2_10" cx="235" cy="310" rx="20" ry="10" transform="rotate(30 235 310)" fill="white" stroke="#333" stroke-width="2"/>
   <ellipse id="leaf3_10" cx="365" cy="315" rx="20" ry="10" transform="rotate(-30 365 315)" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 11: Grass (Light Green) -->
+  <!-- Grass (Color 11 - Light Green) -->
   <rect id="grass_11" x="0" y="370" width="500" height="130" fill="white" stroke="#333" stroke-width="2"/>
   
-  <!-- Region 12: Clouds (Light Blue) -->
+  <!-- Clouds (Color 12 - Light Blue) -->
   <ellipse id="cloud1_12" cx="100" cy="60" rx="30" ry="20" fill="white" stroke="#333" stroke-width="2"/>
   <ellipse id="cloud2_12" cx="130" cy="55" rx="35" ry="22" fill="white" stroke="#333" stroke-width="2"/>
   <ellipse id="cloud3_12" cx="160" cy="60" rx="30" ry="20" fill="white" stroke="#333" stroke-width="2"/>

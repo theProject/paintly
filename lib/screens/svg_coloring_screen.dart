@@ -5,7 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:confetti/confetti.dart';
-import '../models/svg_art.dart';
+
+// Hide the model's SvgColorPalette to avoid the ambiguous_import
+import '../models/svg_art.dart' hide SvgColorPalette;
+
 import '../providers/svg_coloring_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/svg_paint_widget.dart';
@@ -28,17 +31,17 @@ class _SvgColoringScreenState extends State<SvgColoringScreen> {
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 3));
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final provider = context.read<SvgColoringProvider>();
       provider.initializeSvgArt(widget.svgArt);
       provider.addListener(_checkCompletion);
     });
   }
-  
+
   void _checkCompletion() {
     final provider = context.read<SvgColoringProvider>();
-    
     if (provider.isInitialized) {
       if (provider.getProgress() >= 1.0 && !_hasShownConfetti) {
         _hasShownConfetti = true;
@@ -47,7 +50,7 @@ class _SvgColoringScreenState extends State<SvgColoringScreen> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     context.read<SvgColoringProvider>().removeListener(_checkCompletion);
@@ -58,7 +61,7 @@ class _SvgColoringScreenState extends State<SvgColoringScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -182,6 +185,7 @@ class _SvgColoringScreenState extends State<SvgColoringScreen> {
                   ),
                 ),
               ),
+              // This is the widget one.
               const SvgColorPalette(),
             ],
           ),

@@ -1,0 +1,95 @@
+<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="500" fill="#FFFFFF"/>
+  
+  <!-- Pot base (4) -->
+  <path id="pot_base_4" d="M 150 400 L 250 400 L 230 480 L 170 480 Z" 
+        fill="white" stroke="#333" stroke-width="3"/>
+  
+  <!-- Pot rim (3) -->
+  <rect id="pot_rim_3" x="140" y="380" width="120" height="30" rx="5" 
+        fill="white" stroke="#333" stroke-width="3"/>
+  
+  <!-- Pot heart decoration (5) -->
+  <path id="pot_heart_5" d="M 200 430 C 200 420, 190 420, 190 430 C 190 420, 180 420, 180 430 Q 180 440, 190 450 Q 200 440, 200 430" 
+        fill="white" stroke="#333" stroke-width="2"/>
+  
+  <!-- Pot band (6) -->
+  <rect id="pot_band_6" x="150" y="410" width="100" height="10" 
+        fill="white" stroke="#333" stroke-width="2"/>
+  
+  <!-- Main cactus body (1) -->
+  <ellipse id="cactus_body_1" cx="200" cy="280" rx="70" ry="120" 
+           fill="white" stroke="#333" stroke-width="3"/>
+  
+  <!-- Cactus stripes (2) -->
+  <line id="stripe1_2" x1="170" y1="180" x2="170" y2="380" 
+        stroke="#333" stroke-width="2"/>
+  <line id="stripe2_2" x1="200" y1="160" x2="200" y2="390" 
+        stroke="#333" stroke-width="2"/>
+  <line id="stripe3_2" x1="230" y1="180" x2="230" y2="380" 
+        stroke="#333" stroke-width="2"/>
+  
+  <!-- Left arm (1) -->
+  <ellipse id="left_arm_1" cx="120" cy="250" rx="40" ry="60" 
+           fill="white" stroke="#333" stroke-width="3"/>
+  
+  <!-- Left arm stripes (2) -->
+  <line id="left_stripe1_2" x1="105" y1="210" x2="105" y2="290" 
+        stroke="#333" stroke-width="2"/>
+  <line id="left_stripe2_2" x1="120" y1="200" x2="120" y2="300" 
+        stroke="#333" stroke-width="2"/>
+  <line id="left_stripe3_2" x1="135" y1="210" x2="135" y2="290" 
+        stroke="#333" stroke-width="2"/>
+  
+  <!-- Right arm (1) -->
+  <ellipse id="right_arm_1" cx="280" cy="220" rx="40" ry="60" 
+           fill="white" stroke="#333" stroke-width="3"/>
+  
+  <!-- Right arm stripes (2) -->
+  <line id="right_stripe1_2" x1="265" y1="180" x2="265" y2="260" 
+        stroke="#333" stroke-width="2"/>
+  <line id="right_stripe2_2" x1="280" y1="170" x2="280" y2="270" 
+        stroke="#333" stroke-width="2"/>
+  <line id="right_stripe3_2" x1="295" y1="180" x2="295" y2="260" 
+        stroke="#333" stroke-width="2"/>
+  
+  <!-- Flower 1 center (5) -->
+  <circle id="flower1_center_5" cx="200" cy="180" r="15" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  
+  <!-- Flower 1 petals (3) -->
+  <circle id="flower1_petal1_3" cx="185" cy="165" r="12" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="flower1_petal2_3" cx="215" cy="165" r="12" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="flower1_petal3_3" cx="185" cy="195" r="12" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="flower1_petal4_3" cx="215" cy="195" r="12" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  
+  <!-- Flower 2 center (5) -->
+  <circle id="flower2_center_5" cx="160" cy="210" r="12" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  
+  <!-- Flower 2 petals (3) -->
+  <circle id="flower2_petal1_3" cx="150" cy="200" r="10" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="flower2_petal2_3" cx="170" cy="200" r="10" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="flower2_petal3_3" cx="150" cy="220" r="10" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="flower2_petal4_3" cx="170" cy="220" r="10" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  
+  <!-- Face -->
+  <circle cx="180" cy="280" r="3" fill="#333"/>
+  <circle cx="220" cy="280" r="3" fill="#333"/>
+  <path d="M 190 300 Q 200 310, 210 300" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Cheeks (5) -->
+  <circle id="cheek1_5" cx="160" cy="290" r="8" 
+          fill="white" stroke="#333" stroke-width="2"/>
+  <circle id="cheek2_5" cx="240" cy="290" r="8" 
+          fill="white" stroke="#333" stroke-width="2"/>
+</svg>

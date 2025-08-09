@@ -1,7 +1,8 @@
-// lib/models/svg_art.dart
+// ============================================
+// Updated lib/models/svg_art.dart
+// ============================================
 import 'dart:ui';
 
-/// Model class representing an SVG paint-by-number art piece
 class SvgArt {
   final String name;
   final String svgPath;
@@ -18,7 +19,6 @@ class SvgArt {
   });
 }
 
-/// Model class for SVG color palette items
 class SvgColorPalette {
   final int id;
   final Color color;
@@ -31,16 +31,14 @@ class SvgColorPalette {
   });
 }
 
-/// Model class for SVG regions to be colored
 class SvgRegion {
-  final String elementId; // SVG element ID
-  final int colorNumber;  // Number shown in the region
-  final Rect? bounds;     // Optional bounds for tap detection
+  final String elementId;
+  final int colorNumber;
+  final Offset? position; // Position for the number label
 
   SvgRegion({
     required this.elementId,
     required this.colorNumber,
-    this.bounds,
+    this.position,
   });
 }
-
