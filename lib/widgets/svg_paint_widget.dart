@@ -87,7 +87,7 @@ class _SvgPaintWidgetState extends State<SvgPaintWidget> {
                       child: GestureDetector(
                         onTap: () {
                           provider.fillRegion(region.elementId);
-                          context.read<SettingsProvider>().playSound('bubbletap.wav');
+                          context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
                         },
                         child: Container(
                           width: 30,

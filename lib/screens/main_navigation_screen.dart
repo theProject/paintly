@@ -59,7 +59,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
 
   void _handleAddPixel() {
     HapticFeedback.lightImpact();
-    context.read<SettingsProvider>().playSound('bubbletap.wav');
+    context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -316,7 +316,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
         borderRadius: BorderRadius.circular(12),
         onTap: () {
           HapticFeedback.lightImpact();
-          context.read<SettingsProvider>().playSound('bubbletap.wav');
+          context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
           onTap();
         },
         child: Container(
@@ -394,7 +394,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
         onTap: () {
           HapticFeedback.lightImpact();
           setState(() => _selectedIndex = index);
-          context.read<SettingsProvider>().playSound('bubbletap.wav');
+          context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
         },
         child: TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: isSelected ? 1 : 0),

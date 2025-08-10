@@ -1,6 +1,5 @@
 // ============================================
-// Updated lib/screens/svg_home_screen.dart
-// Add the cactus to your SVG list
+// lib/screens/svg_home_screen.dart
 // ============================================
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
@@ -124,7 +123,7 @@ class SvgHomeScreen extends StatelessWidget {
     
     return GestureDetector(
       onTap: () {
-        context.read<SettingsProvider>().playSound('bubbletap.wav');
+        context.read<SettingsProvider>().playSound('audio/bubbletap.wav');
         Navigator.push(
           context,
           MaterialPageRoute(
