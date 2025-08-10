@@ -42,3 +42,4 @@ class SvgRegion {
     this.position,
   });
 }
+

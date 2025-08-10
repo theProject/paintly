@@ -23,7 +23,7 @@ class _SceneColoringScreenState extends State<SceneColoringScreen> {
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 3));
-    
+
     // Load the scene
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SceneProvider>().loadScene(widget.scene);
@@ -34,6 +34,39 @@ class _SceneColoringScreenState extends State<SceneColoringScreen> {
   void dispose() {
     _confettiController.dispose();
     super.dispose();
+  }
+
+  Future<void> _confirmAndReset() async {
+    // capture provider BEFORE async gap (fixes use_build_context_synchronously)
+    final sceneProvider = context.read<SceneProvider>();
+
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Restart scene?'),
+        content: const Text(
+          'This will clear all filled regions and reset draggable items to their starting positions.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Reset'),
+          ),
+        ],
+      ),
+    );
+
+    if (ok == true && mounted) {
+      await sceneProvider.resetProgress(); // now defined in SceneProvider
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Progress reset')),
+      );
+    }
   }
 
   @override
@@ -57,6 +90,13 @@ class _SceneColoringScreenState extends State<SceneColoringScreen> {
           ),
         ),
         actions: [
+          // Reset button
+          IconButton(
+            tooltip: 'Reset progress',
+            icon: const Icon(Icons.restart_alt, color: Colors.black),
+            onPressed: _confirmAndReset,
+          ),
+          // Progress pill
           Consumer<SceneProvider>(
             builder: (context, provider, child) {
               final progress = provider.getProgress();
@@ -118,14 +158,14 @@ class _SceneColoringScreenState extends State<SceneColoringScreen> {
                     borderRadius: BorderRadius.circular(20),
                     child: Consumer<SceneProvider>(
                       builder: (context, provider, child) {
-                        // Check for completion
-                        if (provider.isComplete() && _confettiController.state != ConfettiControllerState.playing) {
+                        // Celebrate completion
+                        if (provider.isComplete() &&
+                            _confettiController.state != ConfettiControllerState.playing) {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             _confettiController.play();
                             context.read<SettingsProvider>().playSound('complete.mp3');
                           });
                         }
-                        
                         return const SceneCanvas();
                       },
                     ),

@@ -4,22 +4,22 @@ import '../scene_mode/data/demo_scenes.dart';
 class SceneProvider extends ChangeNotifier {
   // Current scene data
   SceneData? _currentScene;
-  
+
   // Map of region ID to filled color
   final Map<String, Color?> _filledRegions = {};
-  
+
   // Currently selected color
   Color? _selectedColor;
-  
+
   // Track draggable positions
   final Map<String, Offset> _draggablePositions = {};
-  
+
   // List of all available scenes
   List<SceneData> _availableScenes = [];
-  
+
   // Search query for filtering scenes
   String _searchQuery = '';
-  
+
   // Selected category for filtering
   String? _selectedCategory;
 
@@ -45,12 +45,12 @@ class SceneProvider extends ChangeNotifier {
     _filledRegions.clear();
     _draggablePositions.clear();
     _selectedColor = null;
-    
+
     // Initialize draggable positions
     for (var item in scene.draggableItems) {
       _draggablePositions[item.id] = item.initialPosition;
     }
-    
+
     notifyListeners();
   }
 
@@ -66,8 +66,8 @@ class SceneProvider extends ChangeNotifier {
         (r) => r.id == regionId,
         orElse: () => ColorRegion(id: '', targetColor: Colors.transparent, svgPath: ''),
       );
-      
-      if (region.targetColor == _selectedColor) {
+
+      if (region.id.isNotEmpty && region.targetColor == _selectedColor) {
         _filledRegions[regionId] = _selectedColor;
         notifyListeners();
       }
@@ -81,19 +81,20 @@ class SceneProvider extends ChangeNotifier {
 
   double getProgress() {
     if (_currentScene == null) return 0.0;
-    
+
     final totalRegions = _currentScene!.colorRegions.length;
     final filledCount = _filledRegions.length;
-    
+
     return totalRegions > 0 ? filledCount / totalRegions : 0.0;
   }
 
   bool isComplete() {
     if (_currentScene == null) return false;
-    return _filledRegions.length == _currentScene!.colorRegions.length;
+    return _filledRegions.length == _currentScene!.colorRegions.length &&
+        _currentScene!.colorRegions.isNotEmpty;
   }
 
-  // Methods for scene selection screen
+  // ---- Filtering (scenes list) ----
   void updateSearchQuery(String query) {
     _searchQuery = query;
     notifyListeners();
@@ -120,29 +121,39 @@ class SceneProvider extends ChangeNotifier {
         return scene.category == _selectedCategory;
       }).toList();
     }
-    
+
     return filtered;
   }
 
+  // ---- Reset helpers ----
+
+  /// Soft reset current scene (kept for backwards-compat)
   void resetScene() {
     if (_currentScene != null) {
       _filledRegions.clear();
       _selectedColor = null;
-      
+
       // Reset draggable positions to initial
       for (var item in _currentScene!.draggableItems) {
         _draggablePositions[item.id] = item.initialPosition;
       }
-      
+
       notifyListeners();
     }
   }
+
+  /// Async alias used by the screen button; mirrors the SVG provider pattern.
+  Future<void> resetProgress() async {
+    resetScene();
+  }
+
+  // ---- Convenience getters ----
 
   // Get scene by ID
   SceneData? getSceneById(String id) {
     try {
       return _availableScenes.firstWhere((scene) => scene.id == id);
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }
@@ -151,44 +162,41 @@ class SceneProvider extends ChangeNotifier {
   List<Color> getCurrentScenePalette() {
     if (_currentScene == null) return [];
     return _currentScene!.colorPalette;
-  }
+    }
 
   // Check if a specific color is completed (all regions with that color are filled)
   bool isColorCompleted(Color color) {
     if (_currentScene == null) return false;
-    
-    final regionsWithColor = _currentScene!.colorRegions
-        .where((region) => region.targetColor == color);
-    
+
+    final regionsWithColor =
+        _currentScene!.colorRegions.where((region) => region.targetColor == color);
+
     if (regionsWithColor.isEmpty) return true;
-    
-    return regionsWithColor.every((region) => 
-        _filledRegions.containsKey(region.id) && 
-        _filledRegions[region.id] == color
-    );
+
+    return regionsWithColor.every((region) =>
+        _filledRegions.containsKey(region.id) && _filledRegions[region.id] == color);
   }
 
   // Get number of regions for a specific color
   int getRegionCountForColor(Color color) {
     if (_currentScene == null) return 0;
-    return _currentScene!.colorRegions
-        .where((region) => region.targetColor == color)
-        .length;
+    return _currentScene!.colorRegions.where((region) => region.targetColor == color).length;
   }
 
   // Get filled region count for a specific color
   int getFilledRegionCountForColor(Color color) {
     if (_currentScene == null) return 0;
     return _currentScene!.colorRegions
-        .where((region) => 
-            region.targetColor == color && 
+        .where((region) =>
+            region.targetColor == color &&
             _filledRegions.containsKey(region.id) &&
             _filledRegions[region.id] == color)
         .length;
   }
 }
 
-// Data models for scenes
+// -------- Data models for scenes --------
+
 class SceneData {
   final String id;
   final String name;
@@ -196,7 +204,7 @@ class SceneData {
   final List<ColorRegion> colorRegions;
   final List<DraggableItem> draggableItems;
   final List<Color> colorPalette;
-  final String? category; // Added category support
+  final String? category; // Optional category support
 
   SceneData({
     required this.id,
