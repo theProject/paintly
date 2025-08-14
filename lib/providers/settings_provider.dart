@@ -8,7 +8,7 @@ class SettingsProvider extends ChangeNotifier {
   bool _dragToPaintEnabled = false;
   bool _soundEnabled = true;
   bool _musicEnabled = true;
-  
+
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isMusicPlaying = false;
 
@@ -25,9 +25,9 @@ class SettingsProvider extends ChangeNotifier {
     _dragToPaintEnabled = prefs.getBool('dragToPaintEnabled') ?? false;
     _soundEnabled = prefs.getBool('soundEnabled') ?? true;
     _musicEnabled = prefs.getBool('musicEnabled') ?? true;
-    
+
     notifyListeners();
-    
+
     if (_musicEnabled) {
       playBackgroundMusic();
     }
@@ -51,23 +51,23 @@ class SettingsProvider extends ChangeNotifier {
     _musicEnabled = !_musicEnabled;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('musicEnabled', _musicEnabled);
-    
+
     if (_musicEnabled) {
       playBackgroundMusic();
     } else {
       stopBackgroundMusic();
     }
-    
+
     notifyListeners();
   }
 
   Future<void> playBackgroundMusic() async {
     if (!_musicEnabled || _isMusicPlaying) return;
-    
+
     try {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
       await _audioPlayer.setVolume(0.3);
-      await _audioPlayer.play(AssetSource('audio/MagicPaint.mp3')); // Fixed path
+      await _audioPlayer.play(AssetSource('audio/MagicPaint.mp3')); // kept
       _isMusicPlaying = true;
     } catch (e) {
       debugPrint('Error playing background music: $e');
@@ -81,12 +81,14 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> playSound(String soundFile) async {
     if (!_soundEnabled) return;
-    
+
     try {
       final player = AudioPlayer();
-      // Remove 'audio/' prefix if it exists
-      final cleanFile = soundFile.replaceFirst('audio/', '');
-      await player.play(AssetSource(cleanFile));
+      // Ensure path always points to assets/audio/
+      final path = soundFile.startsWith('audio/')
+          ? soundFile
+          : 'audio/$soundFile';
+      await player.play(AssetSource(path)); // e.g. 'audio/bubbletap.wav'
     } catch (e) {
       debugPrint('Error playing sound $soundFile: $e');
     }

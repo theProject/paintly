@@ -39,13 +39,13 @@ dependencies:
   path_drawing: ^1.0.1
   vector_math: ^2.1.4
   collection: ^1.18.0
-  http: ^1.2.0
+  http: ^1.5.0
   cupertino_icons: ^1.0.6
   json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_lints: ^6.0.0
-  build_runner: ^2.4.8
+  build_runner: 2.6.0
   json_serializable: ^6.7.1
 
 flutter:
@@ -61,11 +61,8 @@ flutter:
     - assets/svg/TasaiYumeForeground.svg
     - assets/svg/valley.svg
     - assets/svg/magic/
-    - assets/svg/magic/characters/
     - assets/svg/magic/farm/
-    - assets/svg/magic/ocean/
-    - assets/svg/magic/city/
-    - assets/svg/magic/forest/
+   
     - assets/animations/  # Can now include .riv files here if needed
 
 # fonts:
