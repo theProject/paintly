@@ -61,11 +61,8 @@ flutter:
     - assets/svg/TasaiYumeForeground.svg
     - assets/svg/valley.svg
     - assets/svg/magic/
-    - assets/svg/magic/characters/
     - assets/svg/magic/farm/
-    - assets/svg/magic/ocean/
-    - assets/svg/magic/city/
-    - assets/svg/magic/forest/
+   
     - assets/animations/  # Can now include .riv files here if needed
 
 # fonts:
