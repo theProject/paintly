@@ -16,7 +16,7 @@ import '../models/svg_art.dart'; // SvgArt, SvgRegion, SvgColorPalette
 Future<SvgArt> autoBuildSvgArtFromAsset({
   required String name,
   required String svgPath,
-  double mergeDistance = 14.0,     // Euclidean RGB distance (0..441)
+  double mergeDistance = 6.0,     // Euclidean RGB distance (0..441)
   double minRegionArea = 120.0,    // width*height cutoff in viewBox units
   Set<String> excludeIdPrefixes = const {'outline_', 'np_'}, // manual opt-out
   Set<String> excludeKeywords = const {'eye', 'pupil', 'glint', 'mouth', 'smile'},
@@ -38,7 +38,7 @@ SvgArt autoBuildSvgArtFromString({
   required String name,
   required String svgPath,
   required String svgString,
-  double mergeDistance = 14.0,
+  double mergeDistance = 6.0,
   double minRegionArea = 120.0,
   Set<String> excludeIdPrefixes = const {'outline_', 'np_'},
   Set<String> excludeKeywords = const {'eye', 'pupil', 'glint', 'mouth', 'smile'},
