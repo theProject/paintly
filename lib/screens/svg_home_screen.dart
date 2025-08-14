@@ -1,6 +1,5 @@
-// ============================================
 // lib/screens/svg_home_screen.dart
-// ============================================
+
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import '../models/svg_art.dart';
@@ -67,6 +66,54 @@ class SvgHomeScreen extends StatelessWidget {
           SvgRegion(elementId: 'pot_band_6', colorNumber: 6, position: const Offset(200, 415)),
         ],
       ),
+
+     SvgArt(
+  name: 'Cute Koala',
+  svgPath: 'assets/svg/char_koala.svg',
+  palette: [
+    SvgColorPalette(id: 1, color: const Color(0xFFB0B0B0), name: 'Koala Grey'),
+    SvgColorPalette(id: 2, color: const Color(0xFFF7AFC1), name: 'Inner Ear Pink'),
+    SvgColorPalette(id: 3, color: const Color(0xFF8D8D8D), name: 'Shadow Grey'),
+  ],
+  // positions omitted — SvgPaintWidget will auto-center labels from geometry
+  regions: [
+    // Head & ears
+    SvgRegion(elementId: 'head_main',            colorNumber: 1),
+    SvgRegion(elementId: 'left_outer_ear',       colorNumber: 1),
+    SvgRegion(elementId: 'right_outer_ear',      colorNumber: 1),
+    SvgRegion(elementId: 'left_inner_ear',       colorNumber: 2),
+    SvgRegion(elementId: 'right_inner_ear',      colorNumber: 2),
+
+    // Face details to paint (cheeks, nose, chin shadow)
+    SvgRegion(elementId: 'left_outer_cheek',     colorNumber: 2),
+    SvgRegion(elementId: 'left_inner_cheek',     colorNumber: 2),
+    SvgRegion(elementId: 'right_inner_cheek',    colorNumber: 2),
+    SvgRegion(elementId: 'right_outer_cheek',    colorNumber: 2),
+    SvgRegion(elementId: 'center_chin_shadow',   colorNumber: 3),
+    SvgRegion(elementId: 'nose',                 colorNumber: 3),
+
+    // Arms + their shadows
+    SvgRegion(elementId: 'left_arm',             colorNumber: 1),
+    SvgRegion(elementId: 'right_arm',            colorNumber: 1),
+    SvgRegion(elementId: 'left_arm_inner_shadow',  colorNumber: 3),
+    SvgRegion(elementId: 'right_arm_inner_shadow', colorNumber: 3),
+    SvgRegion(elementId: 'right_arm_pink_shadow',  colorNumber: 2),
+
+    // Belly
+    SvgRegion(elementId: 'belly_main',           colorNumber: 2),
+    SvgRegion(elementId: 'belly_color_spot',     colorNumber: 2),
+
+    // Legs + feet + leg shadows
+    SvgRegion(elementId: 'left_leg',             colorNumber: 1),
+    SvgRegion(elementId: 'left_foot_front',      colorNumber: 1),
+    SvgRegion(elementId: 'right_leg',            colorNumber: 1),
+    SvgRegion(elementId: 'right_foot_front',     colorNumber: 1),
+    SvgRegion(elementId: 'left_leg_shadow',      colorNumber: 3),
+    SvgRegion(elementId: 'right_leg_shadow',     colorNumber: 3),
+  ],
+),
+
+
       
       // Keep your existing butterfly if you want
       SvgArt(

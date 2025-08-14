@@ -1,6 +1,5 @@
-// ============================================
-// 4. lib/widgets/svg_color_palette.dart
-// ============================================
+//lib/widgets/svg_color_palette.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';

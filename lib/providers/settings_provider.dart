@@ -1,6 +1,5 @@
-// ============================================
-// 2. UPDATED lib/providers/settings_provider.dart
-// ============================================
+// lib/providers/settings_provider.dart
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audioplayers/audioplayers.dart';

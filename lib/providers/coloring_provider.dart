@@ -1,3 +1,5 @@
+// lib/providers/coloring_provider.dart
+
 import 'package:flutter/material.dart';
 import '../models/pixel_art.dart';
 

@@ -1,9 +1,11 @@
 // lib/providers/svg_coloring_provider.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/svg_art.dart';
+import 'package:xml/xml.dart' as xml;
 
 class SvgColoringProvider extends ChangeNotifier {
   SvgArt? _currentSvgArt;
@@ -12,7 +14,7 @@ class SvgColoringProvider extends ChangeNotifier {
   final Map<int, bool> _completedColors = {};
   bool _isInitialized = false;
   String? _loadedSvgContent;
-  String? _originalSvgContent; // Store original SVG
+  String? _originalSvgContent; // Baseline SVG (we neutralize fills into this)
 
   SvgArt? get currentSvgArt => _currentSvgArt;
   Map<String, Color?> get filledRegions => _filledRegions;
@@ -47,6 +49,37 @@ class SvgColoringProvider extends ChangeNotifier {
       }
     }
 
+    // --- Make all paintable regions start colorless (visible outline only) ---
+    if (_loadedSvgContent != null) {
+      try {
+        final doc = xml.XmlDocument.parse(_loadedSvgContent!);
+
+        for (final region in svgArt.regions) {
+          for (final e in doc
+              .findAllElements('*')
+              .where((el) => el.getAttribute('id') == region.elementId)) {
+            // Remove lingering style= (defensive; we already cleaned the file)
+            e.removeAttribute('style');
+
+            // Transparent until painted
+            e.setAttribute('fill', 'none');
+
+            // Ensure there is a visible outline so the shape is still seen
+            e.setAttribute('stroke', e.getAttribute('stroke') ?? '#333333');
+            e.setAttribute('stroke-width', e.getAttribute('stroke-width') ?? '1.5');
+          }
+        }
+
+        // Use this colorless version as the baseline for coloring
+        _originalSvgContent = doc.toXmlString(pretty: false);
+        _loadedSvgContent = _originalSvgContent;
+      } catch (e) {
+        debugPrint('Error neutralizing SVG fills: $e');
+      }
+    }
+    // ------------------------------------------------------------------------
+
+    // Initialize completion tracking for the palette
     for (var color in svgArt.palette) {
       _completedColors[color.id] = false;
     }
@@ -143,13 +176,27 @@ class SvgColoringProvider extends ChangeNotifier {
       }
     });
 
-    // Highlight selected color regions
-    if (_selectedColorId != null) {
+    // Highlight selected color regions (unfilled ones)
+    if (_selectedColorId != null && _currentSvgArt != null) {
       for (var region in _currentSvgArt!.regions) {
-        if (region.colorNumber == _selectedColorId && !_filledRegions.containsKey(region.elementId)) {
+        if (region.colorNumber == _selectedColorId &&
+            !_filledRegions.containsKey(region.elementId)) {
           svgContent = svgContent.replaceAllMapped(
             RegExp('id="${region.elementId}"([^>]*?)stroke-width="[^"]*"'),
             (match) => 'id="${region.elementId}"${match.group(1)}stroke-width="4"',
+          );
+
+          // If no stroke-width exists yet, add one
+          svgContent = svgContent.replaceAllMapped(
+            RegExp('id="${region.elementId}"([^>]*?)(/?>)'),
+            (match) {
+              final attrs = match.group(1) ?? '';
+              final close = match.group(2) ?? '';
+              if (!attrs.contains('stroke-width=')) {
+                return 'id="${region.elementId}"$attrs stroke-width="4"$close';
+              }
+              return match.group(0)!;
+            },
           );
         }
       }
@@ -240,9 +287,9 @@ class SvgColoringProvider extends ChangeNotifier {
     final int g = ((color.g * 255.0).round()) & 0xff;
     final int b = ((color.b * 255.0).round()) & 0xff;
     return '#'
-            '${r.toRadixString(16).padLeft(2, '0')}'
-            '${g.toRadixString(16).padLeft(2, '0')}'
-            '${b.toRadixString(16).padLeft(2, '0')}'
+        '${r.toRadixString(16).padLeft(2, '0')}'
+        '${g.toRadixString(16).padLeft(2, '0')}'
+        '${b.toRadixString(16).padLeft(2, '0')}'
         .toUpperCase();
   }
 

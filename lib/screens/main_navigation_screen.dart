@@ -1,6 +1,5 @@
-// ============================================
-// 3. UPDATED lib/screens/main_navigation_screen.dart
-// ============================================
+// lib/screens/main_navigation_screen.dart
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

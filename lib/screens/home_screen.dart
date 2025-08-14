@@ -1,3 +1,5 @@
+// lib/screens/home_screen.dart
+
 import 'dart:ui'; // for ImageFilter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
